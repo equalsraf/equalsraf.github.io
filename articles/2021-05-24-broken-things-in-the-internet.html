@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Broken things in the Internet</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+  <style type="text/css">
+
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; }
+code > span.dt { color: #204a87; }
+code > span.dv { color: #0000cf; }
+code > span.bn { color: #0000cf; }
+code > span.fl { color: #0000cf; }
+code > span.ch { color: #4e9a06; }
+code > span.st { color: #4e9a06; }
+code > span.co { color: #8f5902; font-style: italic; }
+code > span.ot { color: #8f5902; }
+code > span.al { color: #ef2929; }
+code > span.fu { color: #000000; }
+code > span.er { font-weight: bold; }
+
+
+body {
+font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+font-size: 12px;
+line-height: 1.7;
+max-width: 42em;
+}
+@media only screen and (min-width: 480px) {
+body {
+font-size: 14px;
+}
+}
+@media only screen and (min-width: 768px) {
+body {
+font-size: 16px;
+}
+}
+h1, h2, h3, h4, h5, h6 {
+line-height: 125%;
+}
+h1, h2, h3 {
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2em;
+}
+h2 {
+font-size: 1.8em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+pre, code, kbd, samp {
+font-family: monospace;
+font-size: 0.98em;
+}
+
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+padding: 1em;
+margin: auto;
+background: #fefefe;
+}
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+margin-top: 1em;
+}
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+q { quotes: "\201C" "\201D" "\2018" "\2019"; }
+[lang=de] q {
+quotes: "\00bb" "\00ab" "\203A" "\2039";
+}
+blockquote,
+aside.notes {
+color: #666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+aside.notes {
+color: #999;
+border-left-color: #ffa;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+padding: 0.1em 0.4em;
+
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 2em 0;
+}
+figure img {
+border: none;
+margin: 0 auto 1em;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.byline {
+font-size: 1.2em;
+text-align: center;
+}
+.references a.uri {word-break: break-all;}
+nav.toc ul {
+list-style-type: decimal;
+}
+nav.toc.already-numbered ul {
+}
+nav.toc.already-numbered > ul {
+padding: 0;
+}
+nav#TOC ul {
+list-style-type: none;
+}
+
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+font-size: 9pt;
+line-height: 1.2;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 25mm 30mm 25mm 20mm;
+}
+@page :right {
+margin: 25mm 20mm 25mm 30mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h1, h2, h3, h4 {
+page-break-after: avoid;
+}
+nav#TOC {
+display: none,
+}
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Broken things in the Internet</h1>
+<p class="authors">
+	<span class="author">
+
+			<a href="https://raf.zyks.org">
+				Random Abstract Findings
+				</a>
+	
+		</span>
+</p>
+<p class="date">May 24th 2021</p>
+</header>
+
+<hr />
+Some ramblings about annoying things in the Internet today, mostly about security and privacy, sprinkled with some wishful thinking at the end. This is a bit of a rant, but there are some useful parts in it too.
+<hr />
+<h1 data-number="1" id="problems"><span class="header-section-number">1</span> Problems</h1>
+<p>Here is a list of problems with Internet services today. These are all loosely related to each other. Some are about privacy, others about authentication processes.</p>
+<h2 data-number="1.1" id="online-services-require-an-e-mail-account"><span class="header-section-number">1.1</span> Online services require an e-mail account</h2>
+<p>Most online services require an e-mail address to be associated to the account. This email address is used for several purposes:</p>
+<ol type="1">
+<li>Verification: the account is not available until you verify you own the e-mail address by checking a confirmation code</li>
+<li>Recovery: if you lose your password then you can get a recovery e-mail with a process to get back into your account</li>
+<li>Pseudo 2 Factor Authentication (2FA): we will send you a temporary code before you can login - even if your e-mail is also your password recovery mechanism</li>
+<li>Notifications: sends you information about the service</li>
+</ol>
+<p>The verification step is just meant to verify you own the e-mail account before the account is activated and more e-mail can be sent to the address. i.e. Verification is not really a feature, but a security requirement before you can implement other features via e-mail.</p>
+<p>Pseudo 2FA is interesting in that implementing 2FA with a password+email code is not enough, if holding control of the e-mail account also enables password recovery. Either Recovery needs an additional authentication factor, or 2FA should NOT rely on the regular password. Also introducing a requirement on having e-mail for authentication, means your availability is now dependent on the e-mail service.</p>
+<p>E-mail notification handling is basically outsourcing of notifications to public infrastructure (i.e. e-mail servers). There are services out there that serve the bulk of their notifications via internal APIs (e.g. in mobile applications) and don’t actually use e-mail for this. So this is basically a matter of convenience, the user already has an e-mail account and gets notifications via this channel. There are plenty of other notification channels out there (Whatsapp, IRC, whatever notification protocol works these days).</p>
+<p>I should also point out here that, e-mail is not particularly good at distinguishing between good e-mail and spam. Which is why most of our automated service e-mails end up in the spam box.</p>
+<h2 data-number="1.2" id="email-services-require-phone-numbers"><span class="header-section-number">1.2</span> Email services require phone numbers</h2>
+<p>E-mail service are a specific case in that instead of requiring an e-mail address they require a phone number for account creation. Privacy is the main issue here - why is this service requiring us to add a phone number? The primary reason are similar to other services, the phone number is used when:</p>
+<ul>
+<li>You forgot your password</li>
+<li>The account is compromised and the e-mail provider locks the account and requires a side channel to reset the password</li>
+</ul>
+<p>However it is now affordable to get temporary phone numbers to get confirmation codes. There are even some free services to get SMS messages<span class="citation" data-cites="ReceiveSMS"><a href="#ref-ReceiveSMS" role="doc-biblioref">[1]</a></span> in temporary numbers over multiple countries.</p>
+<p>Some oddballs in this regard:</p>
+<ul>
+<li>Yandex does not require a phone number during registration, but eventually it flags and blocks your account and requires you to provide a number to unblock the account</li>
+<li>Some services allow a secondary e-mail to be used as an alternative to a phone number - which is a problem if you don’t have an existing e-mail account</li>
+<li>there are several disposable e-mail services out there - but these are also a privacy risk, since you are handing over you e-mail to some unknown entity</li>
+<li>there are also disposable SMS services - but again what are the privacy implications of using these?</li>
+</ul>
+<p>Basically account verification/recovery offloads control of authentication to a phone provider If the phone company takes over, or you lose control over your phone number, you may be locked out of your e-mail</p>
+<p>The potential benefits for the e-mail service are:</p>
+<ul>
+<li>presumably it works as proof of humanity for registration, however there are ways to get phone numbers in bulk (for a price) and automatically handle SMS verification</li>
+<li>it works as an additional hurdle against malicious actors that cannot control you phone, however state actors or phone providers should have no difficulty taking over your e-mail account unless some additional security mechanisms are in place</li>
+</ul>
+<h2 data-number="1.3" id="completely-automated-public-turing-test-to-tell-computers-and-humans-apart"><span class="header-section-number">1.3</span> Completely Automated Public Turing test to tell Computers and Humans Apart</h2>
+<p>The use of Captchas for abuse prevention is now widespread. Here is a list of scenarios where these pop up:</p>
+<ul>
+<li>login forms, to avoid password cracking attempts</li>
+<li>registration forms, to avoid bot accounts</li>
+<li>search forms, in forums because this is an expensive operation</li>
+<li>other online operations that are considered to be sensitive targets i.e. rate limiting</li>
+</ul>
+<p>There are two main reasons to use them</p>
+<ul>
+<li>proof of humanity (as intended)</li>
+<li>proof of time - i.e. you should not spam this operation</li>
+</ul>
+<p>Sadly Captcha execution is now a sure way to annoy humans - you end up spending 15min clicking fire hydrants and semaphores, just to login into an account. It is worth pointing out that Captcha options are not uniform across services, and some Captchas are easier on humans than others.</p>
+<p>There are three questions to answer here:</p>
+<ul>
+<li>why are we using human Captchas to do rate limiting?</li>
+<li>are Captchas really the right proof of humanity for your use case</li>
+<li>why does the proof of humanity come after the user is authenticated</li>
+</ul>
+<p>If you are concerned with rate limiting, there are better ways to do it:</p>
+<ul>
+<li>Proof of time/patience, where you force a user to wait before he can proceed <span class="citation" data-cites="PBA"><a href="#ref-PBA" role="doc-biblioref">[2]</a></span></li>
+<li>If the user is already authenticated, rate-limit that specific user</li>
+</ul>
+<p>Concerning proof of humanity - I always find it amusing when my mobile operator website forces me to go through Captchas when logging into their website. It looks like they don’t realize they have other ways to reach me for verification.</p>
+<p>In the cases when the Captcha comes after authentication - the order seems wrong. If the intent was to rate limit by verifying a human is present, then authenticate the user after proof of humanity is done. There are a couple of exceptions to this - but login and search are definitely not the cases where you need proof of humanity.</p>
+<p>Another factor that does not help is forcing to refill the Captcha every time a form is submitted - which again supports that what we are doing is rate limiting not proof of humanity.</p>
+<h2 data-number="1.4" id="universal-2nd-factor-authentication"><span class="header-section-number">1.4</span> Universal 2nd Factor authentication</h2>
+<p>U2F is, so far, an undelivered promise. Primary because adoption has been so low in services, browsers, and other applications.</p>
+<p>Currently there are two main uses for it:</p>
+<ul>
+<li>As the second factor in 2FA, combined with some other authentication mechanism</li>
+<li>As a standalone validation for actions - this is sometimes meant as proof of humanity, or (again) as rate limiting</li>
+</ul>
+<p>In principle U2F has great potential, both as second authenticator factor or even as main authentication - it is definitely more secure than putting passwords in forms and resistant to regular phishing attacks. However, there is nothing preventing you from fully automating U2F responses, and generally U2F does not work as proof of humanity</p>
+<p>In practice we only saw U2F in use via browsers and the javascript API. But it could be used in other protocols, e.g. OpenSSH already has U2F support. Frankly browsers and javascript should not be a requirement for any type of authentication. I have yet to find a proposal for TLS session authentication using U2F outside of academia <span class="citation" data-cites="U2FTLS"><a href="#ref-U2FTLS" role="doc-biblioref">[3]</a></span>.</p>
+<p>Cloudflare recently published an article <span class="citation" data-cites="CloudflareCaptchas"><a href="#ref-CloudflareCaptchas" role="doc-biblioref">[4]</a></span> where they promote the replacement of Captchas with U2F. To be clear here, in the same post they restrict the U2F tokens to a small list of trusted devices - precisely because U2F (the protocol) can not ensure you are human, the best you can do is trust certain tokens are trustworthy for this purpose.</p>
+<p>There are also other limitations. U2F cannot be used in cases when the user is notregistered - so it is not a general purpose rate limiting solution, but it may be a user scoped one.</p>
+<p>One interesting bit about U2F, is that the U2F authentication usually happens as the second factor in authentication. This is interesting if you are concerned about phishing attacks stealing your regular passwords. Shouldn’t we be doing U2F before asking the user for manual passwords?</p>
+<h1 data-number="2" id="discussion"><span class="header-section-number">2</span> Discussion</h1>
+<p>So what can we do about these problems? First, I think we should break down the roles fulfilled e-mail/phone and start introducing better alternatives, in such a way that:</p>
+<ul>
+<li>users do not need to provide an phone number/email address</li>
+<li>authentication, recovery are too coarse right now, break them down into appropriate security scopes</li>
+<li>clearly split rate-limit from proof of humanity, and manage them separately</li>
+</ul>
+<h2 data-number="2.1" id="break-down-user-privileges-per-scope"><span class="header-section-number">2.1</span> Break down user privileges per scope</h2>
+<p>The default model for web sites is that the user holds one password, and this credential is all powerful. Losing this password to an attacker likely means losing the account for ever, because this password can subvert the password recovery mechanism. Forgetting this password, requires creating a new password through some mechanism the service provider registered during account creation - which in turn depends on another credential (e.g. e-mail, master password, or a security question).</p>
+<p>First lets separate these two roles</p>
+<ul>
+<li>you need a credential for you day to day use of a service</li>
+<li>you need what is some times called a master password, or recovery code - solely used when recovering your account</li>
+</ul>
+<p>If the first one is compromised, use the second one recover the account.</p>
+<p>We could continue this break down even further:</p>
+<ul>
+<li>some services use separate credentials for API calls - i.e. you create new credentials just for calling the API or per partner application</li>
+<li>you can have credentials for specific roles (e.g. read-only), or user actions</li>
+</ul>
+<p>There is nothing particular new here. There is an usability issue in that users are not used to managing multiple passwords per account within password managers.</p>
+<h2 data-number="2.2" id="provide-the-user-with-an-inbox"><span class="header-section-number">2.2</span> Provide the user with an Inbox</h2>
+<p>Services can provide you with an inbox for service activity notifications. This inbox can be queried via an API. Preferably these APIs are standard enough to avoid reinventing the wheel (e.g. even RSS works for this).</p>
+<p>A side note here is that IMAP is no different than any other API - the problem with regular e-mail is that the destination server is ,usually, not owned by the service provider or by the user. This means a third party is now involved in the process. As a funny thought experiment a service could provide an IMAP server that exposes service activity as e-mails.</p>
+<p>This removes the dependency on external services for a notification inbox.</p>
+<p>E-mail notifications sent to external services should be optional. They are a convenience, similar to other messaging protocols such as Whatsapp or SMS and are NOT special.</p>
+<p>Do not use this inbox for one-time password recovery codes. For two reasons:</p>
+<ul>
+<li>If your only dependency for recovery is an external service, then this service can take over the user account - at least couple this with other types of authentication</li>
+<li>If the user is blocked out of their inbox (whether internal or external) they cannot recover it</li>
+</ul>
+<p>It can however be used to notify you about account lockdowns, or that recovery is in progress.</p>
+<h2 data-number="2.3" id="stop-outsourcing-rate-limiting"><span class="header-section-number">2.3</span> Stop outsourcing Rate Limiting</h2>
+<p>Out sourcing rate limiting is a bad idea.</p>
+<p>What exactly is the maximum rate for a user to perform this action? This sounds like something specific to your service. The same is truth for security - how often do you want a user to attempt a login? This depends on the authentication method, use-cases, your risk profile and so on.</p>
+<p>Implementing rate limiting in your service is not that hard. The main decisions you have to make are about the scope of limits i.e.:</p>
+<ul>
+<li>are these limits global</li>
+<li>or per user account</li>
+<li>or do we split users in groups (e.g. authenticated against anonymous)</li>
+</ul>
+<p>Captchas are not a rate-limiting mechanism, stop using them as such. They are a mechanism to prove a human is on the other side - and even so the machines are getting better than humans at solving them. They should not be your single rate-limit on sensitive operations.</p>
+<h2 data-number="2.4" id="proof-of-humanity-should-not-punish-humans"><span class="header-section-number">2.4</span> Proof of humanity should not punish humans</h2>
+<p>I don’t have data to support this - but I think we fill way more Captchas than we should. If a human makes a mistake in a form, his reward is an input error and another Captcha, even if he successfully filled another Captcha 2 minutes earlier.</p>
+<p>It is a lot more reasonable to ask people to be patient and wait 2 minutes before retrying than to throw them more challenges. That is, limit the rate of the Captchas you throw at users, and simultaneously rate limit user actions in time - manage these two limits separately.</p>
+<h1 data-number="3" id="things-i-would-like-to-see-happen"><span class="header-section-number">3</span> Things I would like to see happen</h1>
+<h2 data-number="3.1" id="public-service-e-mail"><span class="header-section-number">3.1</span> Public service e-mail</h2>
+<p>I would like to see the post office providing citizens with e-mail inboxes, even if those inboxes are restricted to a list of domains that can send them e-mail.</p>
+<p>My reasoning here is that we are now quite dependent on e-mail for services we consider essential. My power, internet and trash services regularly send me e-mails with bills or updates. Where should I be receiving this e-mail.</p>
+<p>I want to be clear here, since this is a public service:</p>
+<ul>
+<li>this is not a general purpose e-mail where everyone can e-mail everyone</li>
+<li>flowing e-mail must come from either private citizens or registered businesses</li>
+<li>spam is forbidden, and fined accordingly</li>
+</ul>
+<p>This list of requirements will make it impractical for a lot of purposes, and that is perfectly fine.</p>
+<h2 data-number="3.2" id="free-services-without-dependencies"><span class="header-section-number">3.2</span> Free services without dependencies</h2>
+<p>Reddit is likely the most popular service that still allows registration without e-mail addresses or phone numbers. We need more services that break this dependency, but we also cant take the same approach as reddit, where your single means of authentication is a password, and loosing your password means you loose the account.</p>
+<p>For our purposes we want to reduce dependency on external services, and increase security. We want to avoid storing secrets and state on the service side as much as possible, to reduce the impact of spam and data leaks.</p>
+<p><strong>Signup</strong> consists of registering a public key with the service. In fact we register two keys one for account recovery and another for regular use (the service links them together). Let us assume 64 bytes of state per account, which may look small, but will pile up with a large number of users. So I would recomend a proof of patience (or work) to curb the registration of spammer accounts. A proof of work here MUST require the use of the key, to avoid users registering keys that they do not own.</p>
+<p><strong>NOTE</strong>: Another options here is to have the service sign user public keys, generating a certificate, but this requires the user to store this certificate instead of the service.</p>
+<p>It is up to the user to securily hold the corresponding private keys. If these are lost then the account is also lost.</p>
+<h1 class="unnumbered" id="references">References</h1>
+<div id="refs" class="references csl-bib-body" role="doc-bibliography">
+<div id="ref-ReceiveSMS" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline"><span>“Receive SMS.”</span> Available: <a href="https://receive-smss.com/sms/447716885606/">https://receive-smss.com/sms/447716885606/</a></div>
+</div>
+<div id="ref-PBA" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline"><span>“Proof-based authentication for HTTP messages.”</span> Available: <a href="https://tools.ietf.org/id/draft-sporny-http-proofs-01.html">https://tools.ietf.org/id/draft-sporny-http-proofs-01.html</a></div>
+</div>
+<div id="ref-U2FTLS" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline"><span>“Embedding of U2F into TLS 1.3.”</span> Available: <a href="https://sar.informatik.hu-berlin.de/research/publications/SAR-PR-2018-01/SAR-PR-2018-01_.pdf">https://sar.informatik.hu-berlin.de/research/publications/SAR-PR-2018-01/SAR-PR-2018-01_.pdf</a></div>
+</div>
+<div id="ref-CloudflareCaptchas" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline"><span>“Humanity wastes about 500 years per day on CAPTCHAs. It’s time to end this madness.”</span> Available: <a href="https://blog.cloudflare.com/introducing-cryptographic-attestation-of-personhood/">https://blog.cloudflare.com/introducing-cryptographic-attestation-of-personhood/</a></div>
+</div>
+</div>
+</body>
+</html>
