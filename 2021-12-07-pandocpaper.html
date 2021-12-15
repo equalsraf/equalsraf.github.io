@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2021-12-07" />
+  <meta name="keywords" content="Publishing, LaTeX, markdown" />
+  <title>The things I do to avoid backslashes</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+  <style type="text/css">
+
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; }
+code > span.dt { color: #204a87; }
+code > span.dv { color: #0000cf; }
+code > span.bn { color: #0000cf; }
+code > span.fl { color: #0000cf; }
+code > span.ch { color: #4e9a06; }
+code > span.st { color: #4e9a06; }
+code > span.co { color: #8f5902; font-style: italic; }
+code > span.ot { color: #8f5902; }
+code > span.al { color: #ef2929; }
+code > span.fu { color: #000000; }
+code > span.er { font-weight: bold; }
+
+
+body {
+font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+font-size: 12px;
+line-height: 1.7;
+max-width: 42em;
+}
+@media only screen and (min-width: 480px) {
+body {
+font-size: 14px;
+}
+}
+@media only screen and (min-width: 768px) {
+body {
+font-size: 16px;
+}
+}
+h1, h2, h3, h4, h5, h6 {
+line-height: 125%;
+}
+h1, h2, h3 {
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2em;
+}
+h2 {
+font-size: 1.8em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+pre, code, kbd, samp {
+font-family: monospace;
+font-size: 0.98em;
+}
+
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+padding: 1em;
+margin: auto;
+background: #fefefe;
+}
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+margin-top: 1em;
+}
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+q { quotes: "\201C" "\201D" "\2018" "\2019"; }
+[lang=de] q {
+quotes: "\00bb" "\00ab" "\203A" "\2039";
+}
+blockquote,
+aside.notes {
+color: #666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+aside.notes {
+color: #999;
+border-left-color: #ffa;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+padding: 0.1em 0.4em;
+
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 2em 0;
+}
+figure img {
+border: none;
+margin: 0 auto 1em;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.byline {
+font-size: 1.2em;
+text-align: center;
+}
+.references a.uri {word-break: break-all;}
+nav.toc ul {
+list-style-type: decimal;
+}
+nav.toc.already-numbered ul {
+}
+nav.toc.already-numbered > ul {
+padding: 0;
+}
+nav#TOC ul {
+list-style-type: none;
+}
+
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+font-size: 9pt;
+line-height: 1.2;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 25mm 30mm 25mm 20mm;
+}
+@page :right {
+margin: 25mm 20mm 25mm 30mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h1, h2, h3, h4 {
+page-break-after: avoid;
+}
+nav#TOC {
+display: none,
+}
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  
+  <!-- pandoc-eqnos: equation style -->
+  <style>
+    .eqnos { display: inline-block; position: relative; width: 100%; }
+    .eqnos br { display: none; }
+    .eqnos-number { position: absolute; right: 0em; top: 50%; line-height: 0; }
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">The things I do to avoid backslashes</h1>
+<p class="authors">
+	<span class="author">
+
+			<a href="https://raf.zyks.org">
+				Regulus Aquilius Flavius
+				</a>
+	
+		</span>
+</p>
+<p class="date">7 December 2021</p>
+</header>
+
+<hr />
+<p>LaTeX was my primary academic tool for a number of of years. Recent challenge to its use are the need for web publication, and easier adoption through the use of micro markup formats. I am no exception and have used markdown as a format for some of my text, but LaTeX was still the entry point for generators. In this paper we take a quick glance at the tools we use when using pandoc.</p>
+<hr />
+<h1 data-number="1" id="introduction"><span class="header-section-number">1</span> Introduction</h1>
+<p>In this paper we will go over requirements for document formats in academia. I will also briefly describe some of the related formats in this field. This is heavily biased by my own use cases, so take it for what it is.</p>
+<h2 data-number="1.1" id="requirements"><span class="header-section-number">1.1</span> Requirements</h2>
+<p>Multiple final output formats, Postscript, PDF, HTML, EPUB. PDF is the most common final output format for papers online, however there is also a need for html or epub as reflowable format for other mediums. Postscript is still seen as an intermediate format used between the authors and the publishers, primarily to facilitate final style edits by the publisher.</p>
+<p>Complex mathematical equations are one of the flagship features of TeX and LaTeX. Its two main characteristics are:</p>
+<ol type="1">
+<li>output quality is second to none</li>
+<li>math is inserted as a small language which is faster to edit than typical UIs for math equations (once you learn it)</li>
+</ol>
+<p>The other prevalent feature in academic text are references, such as cross references to images, sections and equations. But more importantly bibliographic references that take in a database of publications, format it according to a specification and enable inline citation or the creation of a bibliography index.</p>
+<p>Finally ease of adoption for authors, is the last requirement. In this regard LaTeX is hardly easy, but most authors can survive with minimal knowledge of its internals. If templates are already available, the author can insert his metadata in the proper places and text and figures to generate the final paper.</p>
+<h2 data-number="1.2" id="formats"><span class="header-section-number">1.2</span> Formats</h2>
+<p>First lets have a look at different formats out there that are involved in writing documents (Figure <a href="#fig:diagram">1</a>).</p>
+<div id="fig:diagram" class="fignos">
+<figure>
+<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8IS0tIEdlbmVyYXRlZCBieSBncmFwaHZpeiB2ZXJzaW9uIDIuNDkuMSAoMCkKIC0tPgo8IS0tIFBhZ2VzOiAxIC0tPgo8c3ZnIHdpZHRoPSI0NzdwdCIgaGVpZ2h0PSIxNzRwdCIKIHZpZXdCb3g9IjAuMDAgMC4wMCA0NzcuMzkgMTczLjY1IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KPGcgaWQ9ImdyYXBoMCIgY2xhc3M9ImdyYXBoIiB0cmFuc2Zvcm09InNjYWxlKDEgMSkgcm90YXRlKDApIHRyYW5zbGF0ZSg0IDE2OS42NSkiPgo8cG9seWdvbiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJ0cmFuc3BhcmVudCIgcG9pbnRzPSItNCw0IC00LC0xNjkuNjUgNDczLjM5LC0xNjkuNjUgNDczLjM5LDQgLTQsNCIvPgo8IS0tIHVzZXJpbnB1dCAtLT4KPGcgaWQ9Im5vZGUxIiBjbGFzcz0ibm9kZSI+Cjx0aXRsZT51c2VyaW5wdXQ8L3RpdGxlPgo8ZWxsaXBzZSBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBjeD0iNDQuMiIgY3k9Ii0xMTQuNjUiIHJ4PSI0NC4zOSIgcnk9IjE4Ii8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjQ0LjIiIHk9Ii0xMTAuOTUiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+dXNlcmlucHV0PC90ZXh0Pgo8L2c+CjwhLS0gbWFya2Rvd24gLS0+CjxnIGlkPSJub2RlMiIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+bWFya2Rvd248L3RpdGxlPgo8cG9seWdvbiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjE5OS4zOSwtODIuNjUgMTI0LjM5LC04Mi42NSAxMjQuMzksLTQ2LjY1IDE5OS4zOSwtNDYuNjUgMTk5LjM5LC04Mi42NSIvPgo8dGV4dCB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB4PSIxNjEuODkiIHk9Ii02MC45NSIgZm9udC1mYW1pbHk9IlRpbWVzLHNlcmlmIiBmb250LXNpemU9IjE0LjAwIj5tYXJrZG93bjwvdGV4dD4KPC9nPgo8IS0tIHVzZXJpbnB1dCYjNDU7Jmd0O21hcmtkb3duIC0tPgo8ZyBpZD0iZWRnZTEiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnVzZXJpbnB1dCYjNDU7Jmd0O21hcmtkb3duPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibHVlIiBkPSJNNzUuMjksLTEwMS42NEM4Ny4zNiwtOTYuNDMgMTAxLjU0LC05MC4zIDExNC44NSwtODQuNTUiLz4KPHBvbHlnb24gZmlsbD0iYmx1ZSIgc3Ryb2tlPSJibHVlIiBwb2ludHM9IjExNi41NSwtODcuNjIgMTI0LjM0LC04MC40NCAxMTMuNzgsLTgxLjIgMTE2LjU1LC04Ny42MiIvPgo8L2c+CjwhLS0gbXMgLS0+CjxnIGlkPSJub2RlMyIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+bXM8L3RpdGxlPgo8cG9seWdvbiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjI4OS4zOSwtNTcuNjUgMjM1LjM5LC01Ny42NSAyMzUuMzksLTIxLjY1IDI4OS4zOSwtMjEuNjUgMjg5LjM5LC01Ny42NSIvPgo8dGV4dCB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB4PSIyNjIuMzkiIHk9Ii0zNS45NSIgZm9udC1mYW1pbHk9IlRpbWVzLHNlcmlmIiBmb250LXNpemU9IjE0LjAwIj5tczwvdGV4dD4KPC9nPgo8IS0tIHVzZXJpbnB1dCYjNDU7Jmd0O21zIC0tPgo8ZyBpZD0iZWRnZTIiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnVzZXJpbnB1dCYjNDU7Jmd0O21zPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibHVlIiBkPSJNNzYuMzYsLTEyNy4yQzk5LjUsLTEzNS4wOSAxMzEuOTIsLTE0My4xNyAxNjAuODksLTEzOS42NSIvPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsdWUiIGQ9Ik0xNjIuODksLTEzOS42NUMxNjQuMTgsLTEzOS40OSAyMDcuNTcsLTk1LjA2IDIzNi4zMiwtNjUuNDgiLz4KPHBvbHlnb24gZmlsbD0iYmx1ZSIgc3Ryb2tlPSJibHVlIiBwb2ludHM9IjIzOS4xOCwtNjcuNTYgMjQzLjY0LC01Ny45NSAyMzQuMTYsLTYyLjY5IDIzOS4xOCwtNjcuNTYiLz4KPC9nPgo8IS0tIGxhdGV4IC0tPgo8ZyBpZD0ibm9kZTQiIGNsYXNzPSJub2RlIj4KPHRpdGxlPmxhdGV4PC90aXRsZT4KPHBvbHlnb24gZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSIyODkuMzksLTExMS42NSAyMzUuMzksLTExMS42NSAyMzUuMzksLTc1LjY1IDI4OS4zOSwtNzUuNjUgMjg5LjM5LC0xMTEuNjUiLz4KPHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMjYyLjM5IiB5PSItODkuOTUiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+bGF0ZXg8L3RleHQ+CjwvZz4KPCEtLSB1c2VyaW5wdXQmIzQ1OyZndDtsYXRleCAtLT4KPGcgaWQ9ImVkZ2UzIiBjbGFzcz0iZWRnZSI+Cjx0aXRsZT51c2VyaW5wdXQmIzQ1OyZndDtsYXRleDwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmx1ZSIgZD0iTTE2Mi44OSwtMTM5LjY1QzE4NS4yMywtMTM2Ljk0IDIwOC4xMiwtMTI2Ljc3IDIyNi4yMSwtMTE2LjY5Ii8+Cjxwb2x5Z29uIGZpbGw9ImJsdWUiIHN0cm9rZT0iYmx1ZSIgcG9pbnRzPSIyMjguMzIsLTExOS41MSAyMzUuMiwtMTExLjQ2IDIyNC44LC0xMTMuNDYgMjI4LjMyLC0xMTkuNTEiLz4KPC9nPgo8IS0tIGRvY3ggLS0+CjxnIGlkPSJub2RlNSIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+ZG9jeDwvdGl0bGU+Cjxwb2x5Z29uIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iMzc5LjM5LC0xNjUuNjUgMzI1LjM5LC0xNjUuNjUgMzI1LjM5LC0xMjkuNjUgMzc5LjM5LC0xMjkuNjUgMzc5LjM5LC0xNjUuNjUiLz4KPHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzUyLjM5IiB5PSItMTQzLjk1IiBmb250LWZhbWlseT0iVGltZXMsc2VyaWYiIGZvbnQtc2l6ZT0iMTQuMDAiPmRvY3g8L3RleHQ+CjwvZz4KPCEtLSB1c2VyaW5wdXQmIzQ1OyZndDtkb2N4IC0tPgo8ZyBpZD0iZWRnZTQiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnVzZXJpbnB1dCYjNDU7Jmd0O2RvY3g8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsdWUiIGQ9Ik0xNjIuODksLTEzOS42NUMyMTUuNjUsLTEzMy4yNCAyNzcuMjUsLTEzOC4xNyAzMTUuMjksLTE0Mi42NCIvPgo8cG9seWdvbiBmaWxsPSJibHVlIiBzdHJva2U9ImJsdWUiIHBvaW50cz0iMzE1LjAyLC0xNDYuMTMgMzI1LjM3LC0xNDMuODggMzE1Ljg3LC0xMzkuMTggMzE1LjAyLC0xNDYuMTMiLz4KPC9nPgo8IS0tIG1hcmtkb3duJiM0NTsmZ3Q7bXMgLS0+CjxnIGlkPSJlZGdlOCIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+bWFya2Rvd24mIzQ1OyZndDttczwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0icmVkIiBkPSJNMTk5LjU3LC01NS4zNEMyMDcuOTcsLTUzLjIxIDIxNi44OSwtNTAuOTQgMjI1LjI3LC00OC44MiIvPgo8cG9seWdvbiBmaWxsPSJyZWQiIHN0cm9rZT0icmVkIiBwb2ludHM9IjIyNi4zMSwtNTIuMTYgMjM1LjE0LC00Ni4zMSAyMjQuNTksLTQ1LjM4IDIyNi4zMSwtNTIuMTYiLz4KPC9nPgo8IS0tIG1hcmtkb3duJiM0NTsmZ3Q7bGF0ZXggLS0+CjxnIGlkPSJlZGdlNyIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+bWFya2Rvd24mIzQ1OyZndDtsYXRleDwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIGQ9Ik0xOTkuNTcsLTc1LjQ1QzIwOC4wNiwtNzcuOTUgMjE3LjA5LC04MC42MSAyMjUuNTQsLTgzLjA5Ii8+Cjxwb2x5Z29uIGZpbGw9ImJsYWNrIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjIyNC41NiwtODYuNDUgMjM1LjE0LC04NS45MiAyMjYuNTQsLTc5Ljc0IDIyNC41NiwtODYuNDUiLz4KPC9nPgo8IS0tIGh0bWwgLS0+CjxnIGlkPSJub2RlOCIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+aHRtbDwvdGl0bGU+Cjxwb2x5Z29uIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNDY5LjM5LC01Ny42NSA0MTUuMzksLTU3LjY1IDQxNS4zOSwtMjEuNjUgNDY5LjM5LC0yMS42NSA0NjkuMzksLTU3LjY1Ii8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjQ0Mi4zOSIgeT0iLTM1Ljk1IiBmb250LWZhbWlseT0iVGltZXMsc2VyaWYiIGZvbnQtc2l6ZT0iMTQuMDAiPmh0bWw8L3RleHQ+CjwvZz4KPCEtLSBtYXJrZG93biYjNDU7Jmd0O2h0bWwgLS0+CjxnIGlkPSJlZGdlOSIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+bWFya2Rvd24mIzQ1OyZndDtodG1sPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgZD0iTTE4MS4wNSwtNDYuNjRDMTk0LjcyLC0zNC40MyAyMTQuNiwtMTkuMzMgMjM1LjM5LC0xMi42NSAyOTYuMzIsNi45NCAzMTYuNzQsMC40IDM3OS4zOSwtMTIuNjUgMzg4LjMzLC0xNC41MSAzOTcuNTUsLTE3LjczIDQwNi4wNywtMjEuMzEiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNDA0Ljc3LC0yNC41NyA0MTUuMzMsLTI1LjQ2IDQwNy42MywtMTguMTggNDA0Ljc3LC0yNC41NyIvPgo8L2c+CjwhLS0gdHJvZmYgLS0+CjxnIGlkPSJub2RlNyIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+dHJvZmY8L3RpdGxlPgo8cG9seWdvbiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjM3OS4zOSwtNTcuNjUgMzI1LjM5LC01Ny42NSAzMjUuMzksLTIxLjY1IDM3OS4zOSwtMjEuNjUgMzc5LjM5LC01Ny42NSIvPgo8dGV4dCB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB4PSIzNTIuMzkiIHk9Ii0zNS45NSIgZm9udC1mYW1pbHk9IlRpbWVzLHNlcmlmIiBmb250LXNpemU9IjE0LjAwIj50cm9mZjwvdGV4dD4KPC9nPgo8IS0tIG1zJiM0NTsmZ3Q7dHJvZmYgLS0+CjxnIGlkPSJlZGdlNiIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+bXMmIzQ1OyZndDt0cm9mZjwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIGQ9Ik0yODkuOCwtMzkuNjVDMjk3Ljc5LC0zOS42NSAzMDYuNywtMzkuNjUgMzE1LjIyLC0zOS42NSIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSIzMTUuMzEsLTQzLjE1IDMyNS4zMSwtMzkuNjUgMzE1LjMxLC0zNi4xNSAzMTUuMzEsLTQzLjE1Ii8+CjwvZz4KPCEtLSB0ZXggLS0+CjxnIGlkPSJub2RlNiIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+dGV4PC90aXRsZT4KPHBvbHlnb24gZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSIzNzkuMzksLTExMS42NSAzMjUuMzksLTExMS42NSAzMjUuMzksLTc1LjY1IDM3OS4zOSwtNzUuNjUgMzc5LjM5LC0xMTEuNjUiLz4KPHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzUyLjM5IiB5PSItODkuOTUiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+dGV4PC90ZXh0Pgo8L2c+CjwhLS0gbGF0ZXgmIzQ1OyZndDt0ZXggLS0+CjxnIGlkPSJlZGdlNSIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+bGF0ZXgmIzQ1OyZndDt0ZXg8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBkPSJNMjg5LjgsLTkzLjY1QzI5Ny43OSwtOTMuNjUgMzA2LjcsLTkzLjY1IDMxNS4yMiwtOTMuNjUiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iMzE1LjMxLC05Ny4xNSAzMjUuMzEsLTkzLjY1IDMxNS4zMSwtOTAuMTUgMzE1LjMxLC05Ny4xNSIvPgo8L2c+CjwhLS0gZG9jeCYjNDU7Jmd0O2h0bWwgLS0+CjxnIGlkPSJlZGdlMTEiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPmRvY3gmIzQ1OyZndDtodG1sPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZWQiIGQ9Ik0zNzEuNzUsLTEyOS40NkMzNzQuNCwtMTI2LjU5IDM3Ny4wMywtMTIzLjU5IDM3OS4zOSwtMTIwLjY1IDM5Ny40NywtOTguMTcgMzk3LjMyLC04OS4xMyA0MTUuMzksLTY2LjY1IDQxNS42OSwtNjYuMjggNDE1Ljk5LC02NS45MSA0MTYuMjksLTY1LjU0Ii8+Cjxwb2x5Z29uIGZpbGw9InJlZCIgc3Ryb2tlPSJyZWQiIHBvaW50cz0iNDE5LjA4LC02Ny42NyA0MjMuMDQsLTU3Ljg0IDQxMy44MiwtNjMuMDYgNDE5LjA4LC02Ny42NyIvPgo8L2c+CjwhLS0gcGRmIC0tPgo8ZyBpZD0ibm9kZTkiIGNsYXNzPSJub2RlIj4KPHRpdGxlPnBkZjwvdGl0bGU+Cjxwb2x5Z29uIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNDY5LjM5LC0xMTEuNjUgNDE1LjM5LC0xMTEuNjUgNDE1LjM5LC03NS42NSA0NjkuMzksLTc1LjY1IDQ2OS4zOSwtMTExLjY1Ii8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjQ0Mi4zOSIgeT0iLTg5Ljk1IiBmb250LWZhbWlseT0iVGltZXMsc2VyaWYiIGZvbnQtc2l6ZT0iMTQuMDAiPnBkZjwvdGV4dD4KPC9nPgo8IS0tIGRvY3gmIzQ1OyZndDtwZGYgLS0+CjxnIGlkPSJlZGdlMTAiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPmRvY3gmIzQ1OyZndDtwZGY8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBkPSJNMzc5LjgsLTEzMS40NUMzODguMjIsLTEyNi4yOCAzOTcuNjksLTEyMC40NyA0MDYuNjIsLTExNC45OSIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSI0MDguNjIsLTExNy44NyA0MTUuMzEsLTEwOS42NSA0MDQuOTYsLTExMS45IDQwOC42MiwtMTE3Ljg3Ii8+CjwvZz4KPCEtLSB0ZXgmIzQ1OyZndDtodG1sIC0tPgo8ZyBpZD0iZWRnZTEzIiBjbGFzcz0iZWRnZSI+Cjx0aXRsZT50ZXgmIzQ1OyZndDtodG1sPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZWQiIGQ9Ik0zNzkuOCwtNzcuNDVDMzg4LjIyLC03Mi4yOCAzOTcuNjksLTY2LjQ3IDQwNi42MiwtNjAuOTkiLz4KPHBvbHlnb24gZmlsbD0icmVkIiBzdHJva2U9InJlZCIgcG9pbnRzPSI0MDguNjIsLTYzLjg3IDQxNS4zMSwtNTUuNjUgNDA0Ljk2LC01Ny45IDQwOC42MiwtNjMuODciLz4KPC9nPgo8IS0tIHRleCYjNDU7Jmd0O3BkZiAtLT4KPGcgaWQ9ImVkZ2UxMiIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+dGV4JiM0NTsmZ3Q7cGRmPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgZD0iTTM3OS44LC05My42NUMzODcuNzksLTkzLjY1IDM5Ni43LC05My42NSA0MDUuMjIsLTkzLjY1Ii8+Cjxwb2x5Z29uIGZpbGw9ImJsYWNrIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjQwNS4zMSwtOTcuMTUgNDE1LjMxLC05My42NSA0MDUuMzEsLTkwLjE1IDQwNS4zMSwtOTcuMTUiLz4KPC9nPgo8IS0tIHRyb2ZmJiM0NTsmZ3Q7aHRtbCAtLT4KPGcgaWQ9ImVkZ2UxNSIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+dHJvZmYmIzQ1OyZndDtodG1sPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZWQiIGQ9Ik0zNzkuOCwtMzkuNjVDMzg3Ljc5LC0zOS42NSAzOTYuNywtMzkuNjUgNDA1LjIyLC0zOS42NSIvPgo8cG9seWdvbiBmaWxsPSJyZWQiIHN0cm9rZT0icmVkIiBwb2ludHM9IjQwNS4zMSwtNDMuMTUgNDE1LjMxLC0zOS42NSA0MDUuMzEsLTM2LjE1IDQwNS4zMSwtNDMuMTUiLz4KPC9nPgo8IS0tIHRyb2ZmJiM0NTsmZ3Q7cGRmIC0tPgo8ZyBpZD0iZWRnZTE0IiBjbGFzcz0iZWRnZSI+Cjx0aXRsZT50cm9mZiYjNDU7Jmd0O3BkZjwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIGQ9Ik0zNzkuOCwtNTUuODVDMzg4LjIyLC02MS4wMiAzOTcuNjksLTY2LjgzIDQwNi42MiwtNzIuMzEiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNDA0Ljk2LC03NS40IDQxNS4zMSwtNzcuNjUgNDA4LjYyLC02OS40MyA0MDQuOTYsLTc1LjQiLz4KPC9nPgo8L2c+Cjwvc3ZnPgo=" alt="Figure 1: Relation between different formats" /><figcaption aria-hidden="true"><span>Figure 1:</span> Relation between different formats</figcaption>
+</figure>
+</div>
+<p><strong>Troff</strong> and <strong>TeX</strong> are language for typographic output of complex text, such as mathematics. They can produce high quality output formats such as dvi, postscript or pdf. <strong>TeX</strong> has a slight advantage in the quality of its math output.</p>
+<p><strong>LaTeX</strong> Is a set of macros (that produce <strong>TeX</strong> output), with support for different document classes that abstract the content from the output. For example the article class allows the user to specify an abstract or bibliography without having to worry about the layout of this content in the page. Academic conferences often provide their own <em>LaTeX</em> template that enforces the intended format.</p>
+<p><strong>MS</strong> is a series a macros on top of troff, these can be considered equivalent to LaTeX.</p>
+<p>DOCX (Microsoft Word) is a What You See is What You Get program for producing documents. Some publishers do accept submissions in this format.</p>
+<p><strong>Markdown</strong> is a micro markup format, designed for fast formatted input in web pages. The original specification is restricted the elements seen in HTML, such as titles, text emphasis and links However further extensions add support for tables, bibliography and other requirements for academic texts. The most common output format for markdown text is likely <strong>HTML</strong>, but tools such as <strong>Pandoc</strong> support conversion into multiple formats.</p>
+<p>Some of these are pretty old and but you might now have heard of troff before. Interestingly, IEEE still lists <strong>Troff</strong> as one of its preferred formats for submission, but I was unable to find any templates, and likewise you can find mentions of troff begin used for IETF RFCs <span class="citation" data-cites="usingtroff"><a href="#ref-usingtroff" role="doc-biblioref">[1]</a></span>.</p>
+<p>As seen in the figure, we are abstracting away details from the user, by turning these formats from user input languages to intermediate languages. For example the author is not concerned with the details of page layout so TeX is never used directly, instead LaTeX is used to define the structure of the document and the text or figures. Likewise we are assuming markdown (or some of its extensions) are the right abstraction for authors.</p>
+<p>In the figure, conversion to html is marked in red, because automated conversion often runs into issues. Likewise conversion from markdown to <em>ms</em> is also limited (using pandoc).</p>
+<p>Markdown itself does not provide a solution to express metadata (such as authors, titles, subtitles), tables, math, or references. In this paper I will consider the pandoc extended markdown which:</p>
+<ul>
+<li>supports tables</li>
+<li>supports metadata, stored in a preamble header or a separate file</li>
+<li>supports math using the same input language as latex (with limitations)</li>
+<li>exports latex and other formats via templates and/or filters</li>
+</ul>
+<h1 data-number="2" id="sec:workflow"><span class="header-section-number">2</span> A pandoc workflow</h1>
+<p>In this section I will describe my current setup. The whole process is driven by a Makefile that calls pandoc and other tools to generate the final document. This process depends not only on pandoc <span class="citation" data-cites="pandoc"><a href="#ref-pandoc" role="doc-biblioref">[2]</a></span>, but also on pandoc-xnos <span class="citation" data-cites="xnos"><a href="#ref-xnos" role="doc-biblioref">[3]</a></span> for the internal citations.</p>
+<p>The input is a markdown entry file (passed via <em>INPUT_FILE</em>). In addition you can add bibliographic references from a bibtex file, as long as you mention it in your header metadata.</p>
+<p>The outputs of this makefile are files in the <em>out/pdf</em> or <em>out/html</em> folders. Within these folders you will find temporary files created during the compilation, and the final output named <em>document.ext</em>.</p>
+<p>The usual starting point is to call make like this,</p>
+<pre class="shell"><code>$ make INPUT_FILE=paper.md DRAFT=1</code></pre>
+<p>The following subsections detail the make targets.</p>
+<h2 data-number="2.1" id="make-pdf"><span class="header-section-number">2.1</span> make pdf</h2>
+<p>Creates the pdf file (using TeX). This is based on a template stored in <em>templates/template.tex</em>.</p>
+<h2 data-number="2.2" id="make-html"><span class="header-section-number">2.2</span> make html</h2>
+<p>Creates the html file. This is based on a template stored in <em>templates/template.html</em>, and a matching css file.</p>
+<h2 data-number="2.3" id="make-epub"><span class="header-section-number">2.3</span> make epub</h2>
+<p>This is a bit of a work in progress. It takes the html file generated by the html rule and converts this to an epub using calibre <span class="citation" data-cites="ebookconvert"><a href="#ref-ebookconvert" role="doc-biblioref">[4]</a></span> from the already existing HTML file.</p>
+<h2 data-number="2.4" id="sec:maketex"><span class="header-section-number">2.4</span> make tex</h2>
+<p>This target outputs the TeX content used to generate the pdf</p>
+<h2 data-number="2.5" id="make-watch"><span class="header-section-number">2.5</span> make watch</h2>
+<p>This target continously rebuilds the pdf whenever one of the files in the source folder changes.</p>
+<h2 data-number="2.6" id="pattern-rulles"><span class="header-section-number">2.6</span> Pattern rulles</h2>
+<p>I have pattern rules for auto generating pdf and svg versions of figures from several formats (graphviz, blockdiag). This process is not optimal, it makes the final pdf file depend on all existing diagrams which may or may not be true. For html we use svg instead of pdf.</p>
+<h1 data-number="3" id="example"><span class="header-section-number">3</span> Example</h1>
+<p>This section is just an example of how the output is turning out.</p>
+<h2 data-number="3.1" id="math"><span class="header-section-number">3.1</span> Math</h2>
+<p>You can have inline math such as <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0nVVRGLTgnPz4KPCEtLSBUaGlzIGZpbGUgd2FzIGdlbmVyYXRlZCBieSBkdmlzdmdtIDIuMTEuMSAtLT4KPHN2ZyB2ZXJzaW9uPScxLjEnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZycgeG1sbnM6eGxpbms9J2h0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsnIHdpZHRoPSc0Ni4xMjIwNTZwdCcgaGVpZ2h0PScxMC40NzQ3NDNwdCcgdmlld0JveD0nLS41MDAwMDIgLTkuOTc0NzQxIDQ2LjEyMjA1NiAxMC40NzQ3NDMnPgo8ZGVmcz4KPHBhdGggaWQ9J2cxLTUwJyBkPSdNMi4yNDc1NzItMS42MjU5MDNDMi4zNzUwOTMtMS43NDU0NTUgMi43MDk4MzgtMi4wMDg0NjggMi44MzczNi0yLjEyMDA1QzMuMzMxNTA3LTIuNTc0MzQ2IDMuODAxNzQzLTMuMDEyNzAyIDMuODAxNzQzLTMuNzM3OTgzQzMuODAxNzQzLTQuNjg2NDI2IDMuMDA0NzMyLTUuMzAwMTI1IDIuMDA4NDY4LTUuMzAwMTI1QzEuMDUyMDU1LTUuMzAwMTI1IC40MjI0MTYtNC41NzQ4NDQgLjQyMjQxNi0zLjg2NTUwNEMuNDIyNDE2LTMuNDc0OTY5IC43MzMyNS0zLjQxOTE3OCAuODQ0ODMyLTMuNDE5MTc4QzEuMDEyMjA0LTMuNDE5MTc4IDEuMjU5Mjc4LTMuNTM4NzMgMS4yNTkyNzgtMy44NDE1OTRDMS4yNTkyNzgtNC4yNTYwNCAuODYwNzcyLTQuMjU2MDQgLjc2NTEzMS00LjI1NjA0Qy45OTYyNjQtNC44Mzc4NTggMS41MzAyNjItNS4wMzcxMTEgMS45MjA3OTctNS4wMzcxMTFDMi42NjIwMTctNS4wMzcxMTEgMy4wNDQ1ODMtNC40MDc0NzIgMy4wNDQ1ODMtMy43Mzc5ODNDMy4wNDQ1ODMtMi45MDkwOTEgMi40NjI3NjUtMi4zMDMzNjIgMS41MjIyOTEtMS4zMzg5NzlMLjUxODA1Ny0uMzAyODY0Qy40MjI0MTYtLjIxNTE5MyAuNDIyNDE2LS4xOTkyNTMgLjQyMjQxNiAwSDMuNTcwNjFMMy44MDE3NDMtMS40MjY2NUgzLjU1NDY3QzMuNTMwNzYtMS4yNjcyNDggMy40NjY5OTktLjg2ODc0MiAzLjM3MTM1Ny0uNzE3MzFDMy4zMjM1MzctLjY1MzU0OSAyLjcxNzgwOC0uNjUzNTQ5IDIuNTkwMjg2LS42NTM1NDlIMS4xNzE2MDZMMi4yNDc1NzItMS42MjU5MDNaJy8+CjxwYXRoIGlkPSdnMi02MScgZD0nTTguMDY5NzM4LTMuODczNDc0QzguMjM3MTExLTMuODczNDc0IDguNDUyMzA0LTMuODczNDc0IDguNDUyMzA0LTQuMDg4NjY3QzguNDUyMzA0LTQuMzE1ODE2IDguMjQ5MDY2LTQuMzE1ODE2IDguMDY5NzM4LTQuMzE1ODE2SDEuMDI4MTQ0Qy44NjA3NzItNC4zMTU4MTYgLjY0NTU3OS00LjMxNTgxNiAuNjQ1NTc5LTQuMTAwNjIzQy42NDU1NzktMy44NzM0NzQgLjg0ODgxNy0zLjg3MzQ3NCAxLjAyODE0NC0zLjg3MzQ3NEg4LjA2OTczOFpNOC4wNjk3MzgtMS42NDk4MTNDOC4yMzcxMTEtMS42NDk4MTMgOC40NTIzMDQtMS42NDk4MTMgOC40NTIzMDQtMS44NjUwMDZDOC40NTIzMDQtMi4wOTIxNTQgOC4yNDkwNjYtMi4wOTIxNTQgOC4wNjk3MzgtMi4wOTIxNTRIMS4wMjgxNDRDLjg2MDc3Mi0yLjA5MjE1NCAuNjQ1NTc5LTIuMDkyMTU0IC42NDU1NzktMS44NzY5NjFDLjY0NTU3OS0xLjY0OTgxMyAuODQ4ODE3LTEuNjQ5ODEzIDEuMDI4MTQ0LTEuNjQ5ODEzSDguMDY5NzM4WicvPgo8cGF0aCBpZD0nZzAtNjknIGQ9J004LjMwODg0Mi0yLjc3MzU5OUM4LjMyMDc5Ny0yLjgwOTQ2NSA4LjM1NjY2My0yLjg5MzE1MSA4LjM1NjY2My0yLjk0MDk3MUM4LjM1NjY2My0zLjAwMDc0NyA4LjMwODg0Mi0zLjA2MDUyMyA4LjIzNzExMS0zLjA2MDUyM0M4LjE4OTI5LTMuMDYwNTIzIDguMTY1MzgtMy4wNDg1NjggOC4xMjk1MTQtMy4wMTI3MDJDOC4xMDU2MDQtMy4wMDA3NDcgOC4xMDU2MDQtMi45NzY4MzcgNy45OTgwMDctMi43Mzc3MzNDNy4yOTI2NTMtMS4wNjQwMSA2Ljc3ODU4LS4zNDY3IDQuODY1NzUzLS4zNDY3SDMuMTIwMjk5QzIuOTUyOTI3LS4zNDY3IDIuOTI5MDE2LS4zNDY3IDIuODU3Mjg1LS4zNTg2NTVDMi43MjU3NzgtLjM3MDYxIDIuNzEzODIzLS4zOTQ1MjEgMi43MTM4MjMtLjQ5MDE2MkMyLjcxMzgyMy0uNTczODQ4IDIuNzM3NzMzLS42NDU1NzkgMi43NjE2NDQtLjc1MzE3NkwzLjU4NjU1LTQuMDUyODAySDQuNzcwMTEyQzUuNzAyNjE1LTQuMDUyODAyIDUuNzc0MzQ2LTMuODQ5NTY0IDUuNzc0MzQ2LTMuNDkwOTA5QzUuNzc0MzQ2LTMuMzcxMzU3IDUuNzc0MzQ2LTMuMjYzNzYxIDUuNjkwNjYtMi45MDUxMDZDNS42NjY3NS0yLjg1NzI4NSA1LjY1NDc5NS0yLjgwOTQ2NSA1LjY1NDc5NS0yLjc3MzU5OUM1LjY1NDc5NS0yLjY4OTkxMyA1LjcxNDU3LTIuNjU0MDQ3IDUuNzg2MzAxLTIuNjU0MDQ3QzUuODkzODk4LTIuNjU0MDQ3IDUuOTA1ODUzLTIuNzM3NzMzIDUuOTUzNjc0LTIuOTA1MTA2TDYuNjM1MTE4LTUuNjc4NzA1QzYuNjM1MTE4LTUuNzM4NDgxIDYuNTg3Mjk4LTUuNzk4MjU3IDYuNTE1NTY3LTUuNzk4MjU3QzYuNDA3OTctNS43OTgyNTcgNi4zOTYwMTUtNS43NTA0MzYgNi4zNDgxOTQtNS41ODMwNjRDNi4xMDkwOTEtNC42NjI1MTYgNS44Njk5ODgtNC4zOTk1MDIgNC44MDU5NzgtNC4zOTk1MDJIMy42NzAyMzdMNC40MTE0NTctNy4zNDA0NzNDNC41MTkwNTQtNy43NTg5MDQgNC41NDI5NjQtNy43OTQ3NyA1LjAzMzEyNi03Ljc5NDc3SDYuNzQyNzE1QzguMjEzMi03Ljc5NDc3IDguNTEyMDgtNy40MDAyNDkgOC41MTIwOC02LjQ5MTY1NkM4LjUxMjA4LTYuNDc5NzAxIDguNTEyMDgtNi4xNDQ5NTYgOC40NjQyNTktNS43NTA0MzZDOC40NTIzMDQtNS43MDI2MTUgOC40NDAzNDktNS42MzA4ODQgOC40NDAzNDktNS42MDY5NzRDOC40NDAzNDktNS41MTEzMzMgOC41MDAxMjUtNS40NzU0NjcgOC41NzE4NTYtNS40NzU0NjdDOC42NTU1NDItNS40NzU0NjcgOC43MDMzNjItNS41MjMyODggOC43MjcyNzMtNS43Mzg0ODFMOC45NzgzMzEtNy44MzA2MzVDOC45NzgzMzEtNy44NjY1MDEgOS4wMDIyNDItNy45ODYwNTIgOS4wMDIyNDItOC4wMDk5NjNDOS4wMDIyNDItOC4xNDE0NjkgOC44OTQ2NDUtOC4xNDE0NjkgOC42Nzk0NTItOC4xNDE0NjlIMi44NDUzM0MyLjYxODE4Mi04LjE0MTQ2OSAyLjQ5ODYzLTguMTQxNDY5IDIuNDk4NjMtNy45MjYyNzZDMi40OTg2My03Ljc5NDc3IDIuNTgyMzE2LTcuNzk0NzcgMi43ODU1NTQtNy43OTQ3N0MzLjUyNjc3NS03Ljc5NDc3IDMuNTI2Nzc1LTcuNzExMDgzIDMuNTI2Nzc1LTcuNTc5NTc3QzMuNTI2Nzc1LTcuNTE5ODAxIDMuNTE0ODE5LTcuNDcxOTggMy40Nzg5NTQtNy4zNDA0NzNMMS44NjUwMDYtLjg4NDY4MkMxLjc1NzQxLS40NjYyNTIgMS43MzM0OTktLjM0NjcgLjg5NjYzOC0uMzQ2N0MuNjY5NDg5LS4zNDY3IC41NDk5MzgtLjM0NjcgLjU0OTkzOC0uMTMxNTA3Qy41NDk5MzggMCAuNjIxNjY5IDAgLjg2MDc3MiAwSDYuODYyMjY3QzcuMTI1MjggMCA3LjEzNzIzNS0uMDExOTU1IDcuMjIwOTIyLS4yMDMyMzhMOC4zMDg4NDItMi43NzM1OTlaJy8+CjxwYXRoIGlkPSdnMC05OScgZD0nTTQuNjc0NDcxLTQuNDk1MTQzQzQuNDQ3MzIzLTQuNDk1MTQzIDQuMzM5NzI2LTQuNDk1MTQzIDQuMTcyMzU0LTQuMzUxNjgxQzQuMTAwNjIzLTQuMjkxOTA1IDMuOTY5MTE2LTQuMTEyNTc4IDMuOTY5MTE2LTMuOTIxMjk1QzMuOTY5MTE2LTMuNjgyMTkyIDQuMTQ4NDQzLTMuNTM4NzMgNC4zNzU1OTItMy41Mzg3M0M0LjY2MjUxNi0zLjUzODczIDQuOTg1MzA1LTMuNzc3ODMzIDQuOTg1MzA1LTQuMjU2MDRDNC45ODUzMDUtNC44Mjk4ODggNC40MzUzNjctNS4yNzIyMjkgMy42MTA0NjEtNS4yNzIyMjlDMi4wNDQzMzQtNS4yNzIyMjkgLjQ3ODIwNy0zLjU2MjY0IC40NzgyMDctMS44NjUwMDZDLjQ3ODIwNy0uODI0OTA3IDEuMTIzNzg2IC4xMTk1NTIgMi4zNDMyMTMgLjExOTU1MkMzLjk2OTExNiAuMTE5NTUyIDQuOTk3MjYtMS4xNDc2OTYgNC45OTcyNi0xLjMwMzExM0M0Ljk5NzI2LTEuMzc0ODQ0IDQuOTI1NTI5LTEuNDM0NjIgNC44Nzc3MDktMS40MzQ2MkM0Ljg0MTg0My0xLjQzNDYyIDQuODI5ODg4LTEuNDIyNjY1IDQuNzIyMjkxLTEuMzE1MDY4QzMuOTU3MTYxLS4yOTg4NzkgMi44MjE0Mi0uMTE5NTUyIDIuMzY3MTIzLS4xMTk1NTJDMS41NDIyMTctLjExOTU1MiAxLjI3OTIwMy0uODM2ODYyIDEuMjc5MjAzLTEuNDM0NjJDMS4yNzkyMDMtMS44NTMwNTEgMS40ODI0NDEtMy4wMTI3MDIgMS45MTI4MjctMy44MjU2NTRDMi4yMjM2NjEtNC4zODc1NDcgMi44NjkyNC01LjAzMzEyNiAzLjYyMjQxNi01LjAzMzEyNkMzLjc3NzgzMy01LjAzMzEyNiA0LjQzNTM2Ny01LjAwOTIxNSA0LjY3NDQ3MS00LjQ5NTE0M1onLz4KPHBhdGggaWQ9J2cwLTEwOScgZD0nTTIuNDYyNzY1LTMuNTAyODY0QzIuNDg2Njc1LTMuNTc0NTk1IDIuNzg1NTU0LTQuMTcyMzU0IDMuMjI3ODk1LTQuNTU0OTE5QzMuNTM4NzMtNC44NDE4NDMgMy45NDUyMDUtNS4wMzMxMjYgNC40MTE0NTctNS4wMzMxMjZDNC44ODk2NjQtNS4wMzMxMjYgNS4wNTcwMzYtNC42NzQ0NzEgNS4wNTcwMzYtNC4xOTYyNjRDNS4wNTcwMzYtNC4xMjQ1MzMgNS4wNTcwMzYtMy44ODU0MyA0LjkxMzU3NC0zLjMyMzUzN0w0LjYxNDY5NS0yLjA5MjE1NEM0LjUxOTA1NC0xLjczMzQ5OSA0LjI5MTkwNS0uODQ4ODE3IDQuMjY3OTk1LS43MTczMUM0LjIyMDE3NC0uNTM3OTgzIDQuMTQ4NDQzLS4yMjcxNDggNC4xNDg0NDMtLjE3OTMyOEM0LjE0ODQ0My0uMDExOTU1IDQuMjc5OTUgLjExOTU1MiA0LjQ1OTI3OCAuMTE5NTUyQzQuODE3OTMzIC4xMTk1NTIgNC44Nzc3MDktLjE1NTQxNyA0Ljk4NTMwNS0uNTg1ODAzTDUuNzAyNjE1LTMuNDQzMDg4QzUuNzI2NTI2LTMuNTM4NzMgNi4zNDgxOTQtNS4wMzMxMjYgNy42NjMyNjMtNS4wMzMxMjZDOC4xNDE0NjktNS4wMzMxMjYgOC4zMDg4NDItNC42NzQ0NzEgOC4zMDg4NDItNC4xOTYyNjRDOC4zMDg4NDItMy41MjY3NzUgNy44NDI1OS0yLjIyMzY2MSA3LjU3OTU3Ny0xLjUwNjM1MUM3LjQ3MTk4LTEuMjE5NDI3IDcuNDEyMjA0LTEuMDY0MDEgNy40MTIyMDQtLjg0ODgxN0M3LjQxMjIwNC0uMzEwODM0IDcuNzgyODE0IC4xMTk1NTIgOC4zNTY2NjMgLjExOTU1MkM5LjQ2ODQ5MyAuMTE5NTUyIDkuODg2OTI0LTEuNjM3ODU4IDkuODg2OTI0LTEuNzA5NTg5QzkuODg2OTI0LTEuNzY5MzY1IDkuODM5MTAzLTEuODE3MTg2IDkuNzY3MzcyLTEuODE3MTg2QzkuNjU5Nzc2LTEuODE3MTg2IDkuNjQ3ODIxLTEuNzgxMzIgOS41ODgwNDUtMS41NzgwODJDOS4zMTMwNzYtLjYyMTY2OSA4Ljg3MDczNS0uMTE5NTUyIDguMzkyNTI4LS4xMTk1NTJDOC4yNzI5NzYtLjExOTU1MiA4LjA4MTY5NC0uMTMxNTA3IDguMDgxNjk0LS41MTQwNzJDOC4wODE2OTQtLjgyNDkwNyA4LjIyNTE1Ni0xLjIwNzQ3MiA4LjI3Mjk3Ni0xLjMzODk3OUM4LjQ4ODE2OS0xLjkxMjgyNyA5LjAyNjE1Mi0zLjMyMzUzNyA5LjAyNjE1Mi00LjAxNjkzNkM5LjAyNjE1Mi00LjczNDI0NyA4LjYwNzcyMS01LjI3MjIyOSA3LjY5OTEyOC01LjI3MjIyOUM2Ljg5ODEzMi01LjI3MjIyOSA2LjI1MjU1My00LjgxNzkzMyA1Ljc3NDM0Ni00LjExMjU3OEM1LjczODQ4MS00Ljc1ODE1NyA1LjM0Mzk2LTUuMjcyMjI5IDQuNDQ3MzIzLTUuMjcyMjI5QzMuMzgzMzEzLTUuMjcyMjI5IDIuODIxNDItNC41MTkwNTQgMi42MDYyMjctNC4yMjAxNzRDMi41NzAzNjEtNC45MDE2MTkgMi4wODAxOTktNS4yNzIyMjkgMS41NTQxNzItNS4yNzIyMjlDMS4yMDc0NzItNS4yNzIyMjkgLjkzMjUwMy01LjEwNDg1NyAuNzA1MzU1LTQuNjUwNTZDLjQ5MDE2Mi00LjIyMDE3NCAuMzIyNzktMy40OTA5MDkgLjMyMjc5LTMuNDQzMDg4Uy4zNzA2MS0zLjMzNTQ5MiAuNDU0Mjk2LTMuMzM1NDkyQy41NDk5MzgtMy4zMzU0OTIgLjU2MTg5My0zLjM0NzQ0NyAuNjMzNjI0LTMuNjIyNDE2Qy44MTI5NTEtNC4zMjc3NzEgMS4wNDAxLTUuMDMzMTI2IDEuNTE4MzA2LTUuMDMzMTI2QzEuNzkzMjc1LTUuMDMzMTI2IDEuODg4OTE3LTQuODQxODQzIDEuODg4OTE3LTQuNDgzMTg4QzEuODg4OTE3LTQuMjIwMTc0IDEuNzY5MzY1LTMuNzUzOTIzIDEuNjg1Njc5LTMuMzgzMzEzTDEuMzUwOTM0LTIuMDkyMTU0QzEuMzAzMTEzLTEuODY1MDA2IDEuMTcxNjA2LTEuMzI3MDI0IDEuMTExODMxLTEuMTExODMxQzEuMDI4MTQ0LS44MDA5OTYgLjg5NjYzOC0uMjM5MTAzIC44OTY2MzgtLjE3OTMyOEMuODk2NjM4LS4wMTE5NTUgMS4wMjgxNDQgLjExOTU1MiAxLjIwNzQ3MiAuMTE5NTUyQzEuMzUwOTM0IC4xMTk1NTIgMS41MTgzMDYgLjA0NzgyMSAxLjYxMzk0OC0uMTMxNTA3QzEuNjM3ODU4LS4xOTEyODMgMS43NDU0NTUtLjYwOTcxNCAxLjgwNTIzLS44NDg4MTdMMi4wNjgyNDQtMS45MjQ3ODJMMi40NjI3NjUtMy41MDI4NjRaJy8+CjwvZGVmcz4KPGcgaWQ9J3BhZ2UxJz4KPHVzZSB4PScwJyB5PScwJyB4bGluazpocmVmPScjZzAtNjknLz4KPHVzZSB4PScxMi42ODcwMjQnIHk9JzAnIHhsaW5rOmhyZWY9JyNnMi02MScvPgo8dXNlIHg9JzI1LjExMjUwNScgeT0nMCcgeGxpbms6aHJlZj0nI2cwLTEwOScvPgo8dXNlIHg9JzM1LjM1MTc3MicgeT0nMCcgeGxpbms6aHJlZj0nI2cwLTk5Jy8+Cjx1c2UgeD0nNDAuMzg5NzYnIHk9Jy00LjMzODQzNycgeGxpbms6aHJlZj0nI2cxLTUwJy8+CjwvZz4KPC9zdmc+" style="vertical-align: -0.67px; margin: 0;" height="14.02" width="61.73" alt="E=mc^2" class="inlinemath" />, but also block equations such as</p>
+<p><span id="eq:sq" class="eqnos"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0nVVRGLTgnPz4KPCEtLSBUaGlzIGZpbGUgd2FzIGdlbmVyYXRlZCBieSBkdmlzdmdtIDIuMTEuMSAtLT4KPHN2ZyB2ZXJzaW9uPScxLjEnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZycgeG1sbnM6eGxpbms9J2h0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsnIHdpZHRoPSc0NDcuNDU2NzQycHQnIGhlaWdodD0nMjguNDE4NTYycHQnIHZpZXdCb3g9Jy0uNTAwMDAyIC0yNy45MTg1NiA0NDcuNDU2NzQyIDI4LjQxODU2Mic+CjxkZWZzPgo8cGF0aCBpZD0nZzItNTAnIGQ9J00yLjI0NzU3Mi0xLjYyNTkwM0MyLjM3NTA5My0xLjc0NTQ1NSAyLjcwOTgzOC0yLjAwODQ2OCAyLjgzNzM2LTIuMTIwMDVDMy4zMzE1MDctMi41NzQzNDYgMy44MDE3NDMtMy4wMTI3MDIgMy44MDE3NDMtMy43Mzc5ODNDMy44MDE3NDMtNC42ODY0MjYgMy4wMDQ3MzItNS4zMDAxMjUgMi4wMDg0NjgtNS4zMDAxMjVDMS4wNTIwNTUtNS4zMDAxMjUgLjQyMjQxNi00LjU3NDg0NCAuNDIyNDE2LTMuODY1NTA0Qy40MjI0MTYtMy40NzQ5NjkgLjczMzI1LTMuNDE5MTc4IC44NDQ4MzItMy40MTkxNzhDMS4wMTIyMDQtMy40MTkxNzggMS4yNTkyNzgtMy41Mzg3MyAxLjI1OTI3OC0zLjg0MTU5NEMxLjI1OTI3OC00LjI1NjA0IC44NjA3NzItNC4yNTYwNCAuNzY1MTMxLTQuMjU2MDRDLjk5NjI2NC00LjgzNzg1OCAxLjUzMDI2Mi01LjAzNzExMSAxLjkyMDc5Ny01LjAzNzExMUMyLjY2MjAxNy01LjAzNzExMSAzLjA0NDU4My00LjQwNzQ3MiAzLjA0NDU4My0zLjczNzk4M0MzLjA0NDU4My0yLjkwOTA5MSAyLjQ2Mjc2NS0yLjMwMzM2MiAxLjUyMjI5MS0xLjMzODk3OUwuNTE4MDU3LS4zMDI4NjRDLjQyMjQxNi0uMjE1MTkzIC40MjI0MTYtLjE5OTI1MyAuNDIyNDE2IDBIMy41NzA2MUwzLjgwMTc0My0xLjQyNjY1SDMuNTU0NjdDMy41MzA3Ni0xLjI2NzI0OCAzLjQ2Njk5OS0uODY4NzQyIDMuMzcxMzU3LS43MTczMUMzLjMyMzUzNy0uNjUzNTQ5IDIuNzE3ODA4LS42NTM1NDkgMi41OTAyODYtLjY1MzU0OUgxLjE3MTYwNkwyLjI0NzU3Mi0xLjYyNTkwM1onLz4KPHBhdGggaWQ9J2czLTQzJyBkPSdNNC43NzAxMTItMi43NjE2NDRIOC4wNjk3MzhDOC4yMzcxMTEtMi43NjE2NDQgOC40NTIzMDQtMi43NjE2NDQgOC40NTIzMDQtMi45NzY4MzdDOC40NTIzMDQtMy4yMDM5ODUgOC4yNDkwNjYtMy4yMDM5ODUgOC4wNjk3MzgtMy4yMDM5ODVINC43NzAxMTJWLTYuNTAzNjExQzQuNzcwMTEyLTYuNjcwOTg0IDQuNzcwMTEyLTYuODg2MTc3IDQuNTU0OTE5LTYuODg2MTc3QzQuMzI3NzcxLTYuODg2MTc3IDQuMzI3NzcxLTYuNjgyOTM5IDQuMzI3NzcxLTYuNTAzNjExVi0zLjIwMzk4NUgxLjAyODE0NEMuODYwNzcyLTMuMjAzOTg1IC42NDU1NzktMy4yMDM5ODUgLjY0NTU3OS0yLjk4ODc5MkMuNjQ1NTc5LTIuNzYxNjQ0IC44NDg4MTctMi43NjE2NDQgMS4wMjgxNDQtMi43NjE2NDRINC4zMjc3NzFWLjUzNzk4M0M0LjMyNzc3MSAuNzA1MzU1IDQuMzI3NzcxIC45MjA1NDggNC41NDI5NjQgLjkyMDU0OEM0Ljc3MDExMiAuOTIwNTQ4IDQuNzcwMTEyIC43MTczMSA0Ljc3MDExMiAuNTM3OTgzVi0yLjc2MTY0NFonLz4KPHBhdGggaWQ9J2czLTQ5JyBkPSdNMy40NDMwODgtNy42NjMyNjNDMy40NDMwODgtNy45MzgyMzIgMy40NDMwODgtNy45NTAxODcgMy4yMDM5ODUtNy45NTAxODdDMi45MTcwNjEtNy42MjczOTcgMi4zMTkzMDMtNy4xODUwNTYgMS4wODc5Mi03LjE4NTA1NlYtNi44MzgzNTZDMS4zNjI4ODktNi44MzgzNTYgMS45NjA2NDgtNi44MzgzNTYgMi42MTgxODItNy4xNDkxOTFWLS45MjA1NDhDMi42MTgxODItLjQ5MDE2MiAyLjU4MjMxNi0uMzQ2NyAxLjUzMDI2Mi0uMzQ2N0gxLjE1OTY1MVYwQzEuNDgyNDQxLS4wMjM5MSAyLjY0MjA5Mi0uMDIzOTEgMy4wMzY2MTMtLjAyMzkxUzQuNTc4ODI5LS4wMjM5MSA0LjkwMTYxOSAwVi0uMzQ2N0g0LjUzMTAwOUMzLjQ3ODk1NC0uMzQ2NyAzLjQ0MzA4OC0uNDkwMTYyIDMuNDQzMDg4LS45MjA1NDhWLTcuNjYzMjYzWicvPgo8cGF0aCBpZD0nZzEtMTIwJyBkPSdNNS42NjY3NS00Ljg3NzcwOUM1LjI4NDE4NC00LjgwNTk3OCA1LjE0MDcyMi00LjUxOTA1NCA1LjE0MDcyMi00LjI5MTkwNUM1LjE0MDcyMi00LjAwNDk4MSA1LjM2Nzg3LTMuOTA5MzQgNS41MzUyNDMtMy45MDkzNEM1Ljg5Mzg5OC0zLjkwOTM0IDYuMTQ0OTU2LTQuMjIwMTc0IDYuMTQ0OTU2LTQuNTQyOTY0QzYuMTQ0OTU2LTUuMDQ1MDgxIDUuNTcxMTA4LTUuMjcyMjI5IDUuMDY4OTkxLTUuMjcyMjI5QzQuMzM5NzI2LTUuMjcyMjI5IDMuOTMzMjUtNC41NTQ5MTkgMy44MjU2NTQtNC4zMjc3NzFDMy41NTA2ODUtNS4yMjQ0MDggMi44MDk0NjUtNS4yNzIyMjkgMi41OTQyNzEtNS4yNzIyMjlDMS4zNzQ4NDQtNS4yNzIyMjkgLjcyOTI2NS0zLjcwNjEwMiAuNzI5MjY1LTMuNDQzMDg4Qy43MjkyNjUtMy4zOTUyNjggLjc3NzA4Ni0zLjMzNTQ5MiAuODYwNzcyLTMuMzM1NDkyQy45NTY0MTMtMy4zMzU0OTIgLjk4MDMyNC0zLjQwNzIyMyAxLjAwNDIzNC0zLjQ1NTA0NEMxLjQxMDcxLTQuNzgyMDY3IDIuMjExNzA2LTUuMDMzMTI2IDIuNTU4NDA2LTUuMDMzMTI2QzMuMDk2Mzg5LTUuMDMzMTI2IDMuMjAzOTg1LTQuNTMxMDA5IDMuMjAzOTg1LTQuMjQ0MDg1QzMuMjAzOTg1LTMuOTgxMDcxIDMuMTMyMjU0LTMuNzA2MTAyIDIuOTg4NzkyLTMuMTMyMjU0TDIuNTgyMzE2LTEuNDk0Mzk2QzIuNDAyOTg5LS43NzcwODYgMi4wNTYyODktLjExOTU1MiAxLjQyMjY2NS0uMTE5NTUyQzEuMzYyODg5LS4xMTk1NTIgMS4wNjQwMS0uMTE5NTUyIC44MTI5NTEtLjI3NDk2OUMxLjI0MzMzNy0uMzU4NjU1IDEuMzM4OTc5LS43MTczMSAxLjMzODk3OS0uODYwNzcyQzEuMzM4OTc5LTEuMDk5ODc1IDEuMTU5NjUxLTEuMjQzMzM3IC45MzI1MDMtMS4yNDMzMzdDLjY0NTU3OS0xLjI0MzMzNyAuMzM0NzQ1LS45OTIyNzkgLjMzNDc0NS0uNjA5NzE0Qy4zMzQ3NDUtLjEwNzU5NyAuODk2NjM4IC4xMTk1NTIgMS40MTA3MSAuMTE5NTUyQzEuOTg0NTU4IC4xMTk1NTIgMi4zOTEwMzQtLjMzNDc0NSAyLjY0MjA5Mi0uODI0OTA3QzIuODMzMzc1LS4xMTk1NTIgMy40MzExMzMgLjExOTU1MiAzLjg3MzQ3NCAuMTE5NTUyQzUuMDkyOTAyIC4xMTk1NTIgNS43Mzg0ODEtMS40NDY1NzUgNS43Mzg0ODEtMS43MDk1ODlDNS43Mzg0ODEtMS43NjkzNjUgNS42OTA2Ni0xLjgxNzE4NiA1LjYxODkyOS0xLjgxNzE4NkM1LjUxMTMzMy0xLjgxNzE4NiA1LjQ5OTM3Ny0xLjc1NzQxIDUuNDYzNTEyLTEuNjYxNzY4QzUuMTQwNzIyLS42MDk3MTQgNC40NDczMjMtLjExOTU1MiAzLjkwOTM0LS4xMTk1NTJDMy40OTA5MDktLjExOTU1MiAzLjI2Mzc2MS0uNDMwMzg2IDMuMjYzNzYxLS45MjA1NDhDMy4yNjM3NjEtMS4xODM1NjIgMy4zMTE1ODItMS4zNzQ4NDQgMy41MDI4NjQtMi4xNjM4ODVMMy45MjEyOTUtMy43ODk3ODhDNC4xMDA2MjMtNC41MDcwOTggNC41MDcwOTgtNS4wMzMxMjYgNS4wNTcwMzYtNS4wMzMxMjZDNS4wODA5NDYtNS4wMzMxMjYgNS40MTU2OTEtNS4wMzMxMjYgNS42NjY3NS00Ljg3NzcwOVonLz4KPHBhdGggaWQ9J2cwLTExMicgZD0nTTQuNjUwNTYgMTAuMjIxNjY5TDIuNTQ2NDUxIDUuNTcxMTA4QzIuNDYyNzY1IDUuMzc5ODI2IDIuNDAyOTg5IDUuMzc5ODI2IDIuMzY3MTIzIDUuMzc5ODI2QzIuMzU1MTY4IDUuMzc5ODI2IDIuMjk1MzkyIDUuMzc5ODI2IDIuMTYzODg1IDUuNDc1NDY3TDEuMDI4MTQ0IDYuMzM2MjM5Qy44NzI3MjcgNi40NTU3OTEgLjg3MjcyNyA2LjQ5MTY1NiAuODcyNzI3IDYuNTI3NTIyQy44NzI3MjcgNi41ODcyOTggLjkwODU5MyA2LjY1OTAyOSAuOTkyMjc5IDYuNjU5MDI5QzEuMDY0MDEgNi42NTkwMjkgMS4yNjcyNDggNi40OTE2NTYgMS4zOTg3NTUgNi4zOTYwMTVDMS40NzA0ODYgNi4zMzYyMzkgMS42NDk4MTMgNi4yMDQ3MzIgMS43ODEzMiA2LjEwOTA5MUw0LjEzNjQ4OCAxMS4yODU2NzlDNC4yMjAxNzQgMTEuNDc2OTYxIDQuMjc5OTUgMTEuNDc2OTYxIDQuMzg3NTQ3IDExLjQ3Njk2MUM0LjU2Njg3NCAxMS40NzY5NjEgNC42MDI3NCAxMS40MDUyMyA0LjY4NjQyNiAxMS4yMzc4NThMMTAuMTE0MDcyIDBDMTAuMTk3NzU4LS4xNjczNzIgMTAuMTk3NzU4LS4yMTUxOTMgMTAuMTk3NzU4LS4yMzkxMDNDMTAuMTk3NzU4LS4zNTg2NTUgMTAuMTAyMTE3LS40NzgyMDcgOS45NTg2NTUtLjQ3ODIwN0M5Ljg2MzAxNC0uNDc4MjA3IDkuNzc5MzI4LS40MTg0MzEgOS42ODM2ODYtLjIyNzE0OEw0LjY1MDU2IDEwLjIyMTY2OVonLz4KPC9kZWZzPgo8ZyBpZD0ncGFnZTEnPgo8dXNlIHg9JzI5LjI2NDk1MScgeT0nLTExLjQ3Njk2NicgeGxpbms6aHJlZj0nI2cwLTExMicvPgo8cmVjdCB4PSczOS4yMjc2MjInIHk9Jy0xMS45NTUxNTMnIGhlaWdodD0nLjQ3ODE4Nycgd2lkdGg9JzMxLjY1NTM3MScvPgo8dXNlIHg9JzM5LjIyNzYyMicgeT0nLTEuMDE3NTYyJyB4bGluazpocmVmPScjZzEtMTIwJy8+Cjx1c2UgeD0nNDUuODc5NzA5JyB5PSctNC40NzEyNycgeGxpbms6aHJlZj0nI2cyLTUwJy8+Cjx1c2UgeD0nNTMuMjY4Njg3JyB5PSctMS4wMTc1NjInIHhsaW5rOmhyZWY9JyNnMy00MycvPgo8dXNlIHg9JzY1LjAzMDAwMicgeT0nLTEuMDE3NTYyJyB4bGluazpocmVmPScjZzMtNDknLz4KPC9nPgo8L3N2Zz4=" style="vertical-align: -0.67px; margin: 0;" height="38.03" width="598.85" alt="
+\sqrt{x^2+1}
+" class="displaymath" /><span class="eqnos-number">(1)</span></span></p>
+<p>The later equation can be referenced by a number (in this case Equation <a href="#eq:sq">1</a>).</p>
+<h2 data-number="3.2" id="cross-references"><span class="header-section-number">3.2</span> Cross references</h2>
+<p>The syntax for this is to add a label after the math block, e.g.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>\sqrt{x^2+1}</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>$${#eq:sq}</span></code></pre></div>
+<p>However the actual reference is done as with an @ sign,</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>... in equation @eq:sq</span></code></pre></div>
+<p>References to figures are similar but use the <em>fig:</em> prefix. And likewise the labels are placed after the figure</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="al">![Alt text](file)</span>{#fig:diagram}</span></code></pre></div>
+<h2 data-number="3.3" id="bibliographic-references"><span class="header-section-number">3.3</span> Bibliographic references</h2>
+<p>Bibliographic references, such as <span class="citation" data-cites="pandoc"><a href="#ref-pandoc" role="doc-biblioref">[2]</a></span> are different, and are added as follows:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@citationkey</span><span class="co">]</span></span></code></pre></div>
+<p>The key is the same key used in the bibtex file. You can specify the bibtex file as part of the header metadata</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bibliography: references.bib</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>---</span></code></pre></div>
+<h1 data-number="4" id="discussion"><span class="header-section-number">4</span> Discussion</h1>
+<p>Here is some food for thought about the negative side of all this.</p>
+<h2 data-number="4.1" id="bloat"><span class="header-section-number">4.1</span> Bloat</h2>
+<p><em>Bloat</em> is a pretty generic term - but when it comes to editing tools I assume it is related to the size (bytes) the system takes over in your disk, and with the user facing complexity.</p>
+<p>Latex is sometimes accused of being bloated, while at the same time being extremely multifaceted - there is a package for everything and popular distributions include lots of packages. Texlive (a popular Latex distribution) is available in a DVD, and is larger than some operating system installation disks.</p>
+<p>Two tricks can be employed to save space in Texlive: avoid installing packages you don’t need, and skip installing documentation files. To skip the instalation of the documentation in new packages, use <em>tlmgr option docfiles 0</em>. If the packages are already installed, the documentation files can be removed from texmf-dist/doc/.</p>
+<p>To avoid the larger packages start with a small TexLive scheme: scheme-basic. The current size of my installation is 200 Megabytes, and is enough to generate a IEEE paper.</p>
+<p>Pandoc is usually built as a single static binary. The size of this binary in my system is 158 Megabytes, an additional filter increases this further by 14 Megabytes. The reason for this size is that pandoc supports a large array of input and output formats that go beyond markdown and LaTeX, however there is no way to separate this functionality.</p>
+<p>GNU troff is the smallest of the systems we looked at. The installed size for GNU troff is 11 Megabytes, however this does not include the size of the standard c++ library or other dynamically linked dependencies.</p>
+<p>Finally depencies add to this size, pandoc requires an installed version of LaTeX to generate PDF, and some pandoc filters require python.</p>
+<h2 data-number="4.2" id="troubleshooting-complexity"><span class="header-section-number">4.2</span> Troubleshooting complexity</h2>
+<p>With the increase in complexity comes increased difficulty in troubleshooting issues. It is all good and well if you have no issues. But if you run into a problem you now have to troubleshoot over multiple languages:</p>
+<ol type="1">
+<li>pandoc’s flavour of markdown</li>
+<li>pandoc’s templating engine</li>
+<li>latex</li>
+<li>output formats (html, pdf, etc)</li>
+</ol>
+<p>Some inner workings of pandoc help with this task. The <strong>fail-if-warning</strong> option causes pandoc to fail on warnings. And it is possible to generate the intermediate TeX output when we run into problems (Section <a href="#sec:maketex">2.4</a>).</p>
+<p>A word of warning when using a custom LaTeX template, pandoc generates a significant amount of new environment definitions. When upgrading pandoc you may find that you template no longer works becaus pandoc is not generating the same LaTeX as before. In such cases it is useful to investigate the default pandoc templates, available via <em>pandoc -D=latex</em>.</p>
+<p>From my perspective I don’t think this setup is easier, since I still have to understand LaTeX internals to handle troubleshooting, and I had to write the LaTex/HTML templates anyway.</p>
+<h2 data-number="4.3" id="bibliographic-references-1"><span class="header-section-number">4.3</span> Bibliographic references</h2>
+<p>Bibliographic references do not rely on LaTeX, even when generating a PDF. The citeproc option from pandoc, causes it to generate its own references and representation. This means that references always show up at the end of the document, it is up to you to add a title at the end.</p>
+<p>I have not gone further into bibliographic references - I am aware pandoc has additional options (e.g. for biblatex) but those only make sense if you are only generating LaTeX.</p>
+<p>Currently I am using a CSL file which is supposed to format references according to IEEE rules, but it does have a string margin space between the reference number and the title.</p>
+<h2 data-number="4.4" id="math-in-html"><span class="header-section-number">4.4</span> Math in HTML</h2>
+<p>Pandoc supports the use LaTeX math blocks directly as part of the document. As such convertion to LaTeX is trivial, however conversion to HTML is a challenge.</p>
+<p>My favorite approach is to use Gladtex <span class="citation" data-cites="gladtex"><a href="#ref-gladtex" role="doc-biblioref">[5]</a></span>, which converts LaTeX formulas to SVG. Internally this works as a filter that inspects the pandoc AST, generates svg files for the formulas (via TeX) and replaces the entries in the AST with images. My only issue with this is that pandoc expects to call this script with a single argument and the script itself does not accept this, so I am using a wrapper script.</p>
+<h2 data-number="4.5" id="figure-dimensions"><span class="header-section-number">4.5</span> Figure dimensions</h2>
+<p>There is no pandoc support for specifying image widths. In HTML I use a CSS declaration to set the maximum image width to 100%, in case they are wider than the page width. Likewise in the LaTeX template I force the image width to the columnwidth:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\setkeys</span>{Gin}{width=<span class="fu">\columnwidth</span>}</span></code></pre></div>
+<p>however this is not equivalent to the HTML version and I do have to exercise some discipline when designing diagrams to align to this.</p>
+<h2 data-number="4.6" id="level-1-headers-in-html"><span class="header-section-number">4.6</span> Level 1 headers in HTML</h2>
+<p>Pandoc uses HTML H1 tags for the first level headers and for the main title. Naturally the main title would have to be an H1 tag, and since I also use a single hash when writing my titles then all sections are using H1 titles. Changing the input would not work either, since it would cause the table of contents to list sections as <em>0.x</em>.</p>
+<p>This is a known limitation of pandoc <span class="citation" data-cites="pandoc5071"><a href="#ref-pandoc5071" role="doc-biblioref">[6]</a></span>, and is a problem for html accessibility.</p>
+<h1 data-number="5" id="conclusions"><span class="header-section-number">5</span> Conclusions</h1>
+<p>Yes I just added another level of indirection to my life <span class="citation" data-cites="rfc1925"><a href="#ref-rfc1925" role="doc-biblioref">[7]</a></span>. Sadly I don’t think this will be replacing LaTeX for publishing academic papers for me, mainly due to the bibliographic issues.</p>
+<p>It does seem to work well enough for daily stuff, but I am missing some of the more fancy tricks seen in LaTeX such as tikz/xy. Although I can add them via some additional Makefile tricks, since TeX is as capable of generating a diagram as graphviz.</p>
+<h1 class="unnumbered" id="references">References</h1>
+<div id="refs" class="references csl-bib-body" role="doc-bibliography">
+<div id="ref-usingtroff" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline"><span>“<span class="nocase">Writing Internet-Drafts and Requests For Comments using troff and nroff</span>.”</span> Available: <a href="https://datatracker.ietf.org/doc/html/draft-lilly-using-troff-04">https://datatracker.ietf.org/doc/html/draft-lilly-using-troff-04</a></div>
+</div>
+<div id="ref-pandoc" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline"><span>“<span class="nocase">Pandoc a universal document converter</span>.”</span> Available: <a href="https://pandoc.org/">https://pandoc.org/</a></div>
+</div>
+<div id="ref-xnos" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline"><span>“<span class="nocase">Library code for pandoc-fignos/eqnos/tablenos/secnos</span>.”</span> Available: <a href="https://github.com/tomduck/pandoc-xnos">https://github.com/tomduck/pandoc-xnos</a></div>
+</div>
+<div id="ref-ebookconvert" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline"><span>“<span class="nocase">ebook-convert</span>.”</span> Available: <a href="https://manual.calibre-ebook.com/generated/en/ebook-convert.html#look-and-feel">https://manual.calibre-ebook.com/generated/en/ebook-convert.html#look-and-feel</a></div>
+</div>
+<div id="ref-gladtex" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline"><span>“<span class="nocase">embed LaTeX formulas into LaTeX </span>.”</span> Available: <a href="https://github.com/humenda/GladTeX">https://github.com/humenda/GladTeX</a></div>
+</div>
+<div id="ref-pandoc5071" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline"><span>“<span class="nocase">Issue of –numbered-sections used with –base-header-level=2: produces 0.x.y</span>.”</span> Available: <a href="https://github.com/jgm/pandoc/issues/5071">https://github.com/jgm/pandoc/issues/5071</a></div>
+</div>
+<div id="ref-rfc1925" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline">R. Callon, <span>“<span>The Twelve Networking Truths</span>.”</span> RFC 1925; RFC Editor, Apr. 01, 1996. doi: <a href="https://doi.org/10.17487/RFC1925">10.17487/RFC1925</a>.</div>
+</div>
+</div>
+</body>
+</html>
