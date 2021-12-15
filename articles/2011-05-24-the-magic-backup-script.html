@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2011-05-24" />
+  <meta name="description" content="Doing remote rsync backups with a magic bash script" />
+  <title>The Magic backup script</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style type="text/css">
+
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; }
+code > span.dt { color: #204a87; }
+code > span.dv { color: #0000cf; }
+code > span.bn { color: #0000cf; }
+code > span.fl { color: #0000cf; }
+code > span.ch { color: #4e9a06; }
+code > span.st { color: #4e9a06; }
+code > span.co { color: #8f5902; font-style: italic; }
+code > span.ot { color: #8f5902; }
+code > span.al { color: #ef2929; }
+code > span.fu { color: #000000; }
+code > span.er { font-weight: bold; }
+
+
+body {
+font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+line-height: 1.7;
+max-width: 42em;
+}
+h1, h2, h3, h4, h5, h6 {
+line-height: 125%;
+}
+h1, h2, h3 {
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2em;
+}
+h2 {
+font-size: 1.8em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+pre, code, kbd, samp {
+font-family: monospace;
+font-size: 0.98em;
+}
+
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+padding: 1em;
+margin: auto;
+background: #fefefe;
+}
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+margin-top: 1em;
+}
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+q { quotes: "\201C" "\201D" "\2018" "\2019"; }
+[lang=de] q {
+quotes: "\00bb" "\00ab" "\203A" "\2039";
+}
+blockquote,
+aside.notes {
+color: #666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+aside.notes {
+color: #999;
+border-left-color: #ffa;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+padding: 0.1em 0.4em;
+
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 2em 0;
+}
+figure img {
+border: none;
+margin: 0 auto 1em;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.byline {
+font-size: 1.2em;
+text-align: center;
+}
+.references a.uri {word-break: break-all;}
+nav.toc ul {
+list-style-type: decimal;
+}
+nav.toc.already-numbered ul {
+}
+nav.toc.already-numbered > ul {
+padding: 0;
+}
+nav#TOC ul {
+list-style-type: none;
+}
+
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+line-height: 1.2;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 25mm 30mm 25mm 20mm;
+}
+@page :right {
+margin: 25mm 20mm 25mm 30mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h1, h2, h3, h4 {
+page-break-after: avoid;
+}
+nav#TOC {
+display: none,
+}
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">The Magic backup script</h1>
+<p class="date">2011-05-24</p>
+</header>
+
+<hr />
+<p>After looking high and low for a decent backup application I ended up giving up, and making my own bash script using rsync. I’m highly dependant on client initiated remote backups, and it seems there are not many solutions like that out there.</p>
+<hr />
+<blockquote>
+<p><strong>Update</strong>: find the latest version <a href="https://github.com/equalsraf/magick-backup-script">here</a>, it now supports local backups too.</p>
+</blockquote>
+<p>I got tired of looking around and decided to cook a bash script, based on some similar discussions I saw online. It seems a lot of people have reached the same conclusion and created some various kinds of scripts.</p>
+<p>But first, let me document what I would like a backup solution to provide.</p>
+<h1 data-number="1" id="requirements"><span class="header-section-number">1</span> Requirements</h1>
+<p>So here are my picky requirements for a half decent backup solution for my Linux laptop:</p>
+<ol type="1">
+<li>Doesn’t take absurd amount of space. If my home folder is 1GB and I make 3 backups, the total ammount of changes shouldn’t total 1*3=3GB unless I’ve completely replaced all the files.</li>
+<li>No special restore tools are required. Restoring a given backup should be a trivial task, such as accessing a folder and copying everything back.</li>
+<li>Fast. Both doing backups as well as restoring them.</li>
+<li>Support for client initiated backups. My laptop roams around a lot, so the backups must be initiated by the client.</li>
+<li>Remote storage. I do a LOT of remote backups, duplicates, triplicates, whenever I get the chance.</li>
+</ol>
+<h1 data-number="2" id="what-are-the-alternatives"><span class="header-section-number">2</span> What are the alternatives</h1>
+<p>Here are the alternatives I checked before taking the lone-wolf path. The numbers in parenthesis are the requirements they did not fulfill:</p>
+<ul>
+<li>TimeVault(5) - In terms of design and features this is actually one of the front runners, but it only supports backup to disks, no remote shares.</li>
+<li>BackupPC(4) - Great professional level backup solution, but the backups must be started by a central server that pulls from all machines.</li>
+<li>Amanda(4) - Same as BackupPC. Also its a little to complex to configure.</li>
+<li>Bacula(4) - Same as the BackupPC</li>
+<li>Duplicity(3,2) - Most likely one of the most space-efficient solutions with support for lots of remote protocols, not to mention encrypted backups. But it stores the snapshots as a differential tar.gz.</li>
+<li>FlyBack(2) - Uses Git for storage.</li>
+<li>Keep - Interesting, but apparently it is no longer maintained.</li>
+</ul>
+<p>From all of the above, TimeVault was the closest to being what I wanted, but got left behind because I really need remote backups. Duplicity also looks like great but it does not fit my purposes.</p>
+<h1 data-number="3" id="enter-the-magic-script"><span class="header-section-number">3</span> Enter the magic script</h1>
+<p>So basically I wanted a backup utility to backup some of my folders into remote servers (mostly ssh). Rsync seemed like the ideal tool for the job, it can use ssh as transport and it can setup hardlinks to save space between backups.</p>
+<p>Backups are stored, one per folder called backup-DATE. There is also a symbolic link folder called <em>current</em> that points to the last backup.</p>
+<pre><code>$ ls backups/
+backup-2011-05-16T10:25:40  backup-2011-05-16T10:44:57  backup-2011-05-24T16:10:02
+backup-2011-05-16T10:34:09  backup-2011-05-17T09:02:43  current</code></pre>
+<p>Rsync saves space by hard-linking files between these folders, if there were no changes between them. Restoring a particular backup is as simple as copying one of these directories. If you are interested in knowing more about the rsync details check the <em>Rsync time machine</em> link I left in the references.</p>
+<p>The solution is split in two scripts: one that handles backups the other stores configuration settings (check bellow). You can create as many settings scripts as you want, as long as you keep them on the same folder as backup.sh.</p>
+<h1 data-number="4" id="backup-to-home.sh"><span class="header-section-number">4</span> backup-to-home.sh</h1>
+<p>Here is an example script to backup my home folder to homeserver.com:backups</p>
+<pre><code>:::bash
+#!/bin/bash
+SOURCE=$HOME
+SSH_HOST=&quot;raf@homeserver.com&quot;
+SSH_PATH=&quot;backups/&quot;
+. backup.sh</code></pre>
+<h1 data-number="5" id="backup.sh"><span class="header-section-number">5</span> backup.sh</h1>
+<pre><code>:::bash
+# An rsync/ssh backup script
+# based on http://blog.interlinked.org/tutorials/rsync_time_machine.html 
+#
+# Some important variables that MUST be defined:
+# - SOURCE  The folder to be backed up
+# - SSH_HOST    The ssh host (i.e. user@host)
+# - SSH_PATH    The backups root path at the server
+#
+# The following are not mandatory
+# - EXCLUDEFILE A file with a list of ignore patterns($HOME/.rsync/exclude)
+
+if [ -z &quot;$SOURCE&quot; ]; then
+    echo &quot;SOURCE is not defined&quot;
+    exit
+fi
+
+if [ -z &quot;$SSH_HOST&quot; ]; then
+    echo &quot;SSH_HOST is not defined&quot;
+    exit
+fi
+
+if [ -z &quot;$SSH_PATH&quot; ]; then
+    echo &quot;SSH_PATH is not defined&quot;
+    exit
+fi
+
+
+DATE=`date &quot;+%Y-%m-%dT%H:%M:%S&quot;`
+TARGET=&quot;$SSH_HOST:$SSH_PATH/incomplete-$DATE&quot;
+
+EXCLUDEFILE=&quot;$HOME/.rsync/exclude&quot;
+
+RSYNC=/usr/bin/rsync
+RSYNC_ARGS=&quot;-azP \
+    --delete \
+    --delete-excluded \
+    --exclude-from=$EXCLUDEFILE \
+    --link-dest=../current \
+    $SOURCE $TARGET&quot;
+
+# Check rsync
+if [ ! -x $RSYNC ]; then
+    echo &quot;Cannot find rsync: $RSYNC&quot;
+    exit
+fi
+
+# Check source dir
+if [ ! -d $SOURCE ]; then
+    echo &quot;Source must be a directory&quot;
+    exit
+fi
+
+# Check exclude file
+if [ ! -f $EXCLUDEFILE ]; then
+    echo &quot;Exclude file not found: $EXCLUDEFILE&quot;
+    exit
+fi
+
+CMD=&quot;$RSYNC $RSYNC_ARGS&quot;
+
+# Wait for keypress
+echo &quot;Preparing to snapshot&quot;
+echo &quot;    Command: $CMD&quot;
+echo &quot;&lt;Press any key to continue&gt;&quot;
+read
+
+$CMD \
+&amp;&amp; ssh $SSH_HOST \
+&quot;mv $SSH_PATH/incomplete-$DATE $SSH_PATH/backup-$DATE \
+&amp;&amp; rm -f $SSH_PATH/current \
+&amp;&amp; ln -s backup-$DATE $SSH_PATH/current&quot;</code></pre>
+<h1 data-number="6" id="when-this-does-not-work-and-then-what"><span class="header-section-number">6</span> When this does not work, and then what …</h1>
+<p>Well a couple of days ago I saw my disk fail hard (well almost hard) and was spurred into a maniacal backup frenzy. So just to be sure I decided to backup my files onto an external FAT disk I had lying around. I quickly hacked the previous script into using local paths instead and then saw it fail miserably, why? Mostly because FAT does not like weird filenames and other things.</p>
+<h1 data-number="7" id="references"><span class="header-section-number">7</span> References</h1>
+<ul>
+<li><a href="https://wiki.ubuntu.com/TimeVault">TimeVault</a></li>
+<li><a href="http://www.amanda.org/">Amanda</a></li>
+<li><a href="http://blog.interlinked.org/tutorials/rsync_time_machine.html">Rsync time machine</a></li>
+<li><a href="http://duplicity.nongnu.org/">Duplicity</a></li>
+<li><a href="https://github.com/equalsraf/magick-backup-script">Github project</a></li>
+</ul>
+</body>
+</html>
