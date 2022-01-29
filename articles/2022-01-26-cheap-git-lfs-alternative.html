@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2022-01-22" />
+  <title>Cheap git lfs alternative</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style type="text/css">
+
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; }
+code > span.dt { color: #204a87; }
+code > span.dv { color: #0000cf; }
+code > span.bn { color: #0000cf; }
+code > span.fl { color: #0000cf; }
+code > span.ch { color: #4e9a06; }
+code > span.st { color: #4e9a06; }
+code > span.co { color: #8f5902; font-style: italic; }
+code > span.ot { color: #8f5902; }
+code > span.al { color: #ef2929; }
+code > span.fu { color: #000000; }
+code > span.er { font-weight: bold; }
+
+
+body {
+font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+line-height: 1.7;
+max-width: 42em;
+}
+h1, h2, h3, h4, h5, h6 {
+line-height: 125%;
+}
+h1, h2, h3 {
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2em;
+}
+h2 {
+font-size: 1.8em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+pre, code, kbd, samp {
+font-family: monospace;
+font-size: 0.98em;
+}
+
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+padding: 1em;
+margin: auto;
+background: #fefefe;
+}
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+margin-top: 1em;
+}
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+q { quotes: "\201C" "\201D" "\2018" "\2019"; }
+[lang=de] q {
+quotes: "\00bb" "\00ab" "\203A" "\2039";
+}
+blockquote,
+aside.notes {
+color: #666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+aside.notes {
+color: #999;
+border-left-color: #ffa;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+padding: 0.1em 0.4em;
+
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 2em 0;
+}
+figure img {
+border: none;
+margin: 0 auto 1em;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.byline {
+font-size: 1.2em;
+text-align: center;
+}
+.references a.uri {word-break: break-all;}
+nav.toc ul {
+list-style-type: decimal;
+}
+nav.toc.already-numbered ul {
+}
+nav.toc.already-numbered > ul {
+padding: 0;
+}
+nav#TOC ul {
+list-style-type: none;
+}
+
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+line-height: 1.2;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 25mm 30mm 25mm 20mm;
+}
+@page :right {
+margin: 25mm 20mm 25mm 30mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h1, h2, h3, h4 {
+page-break-after: avoid;
+}
+nav#TOC {
+display: none,
+}
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Cheap git lfs alternative</h1>
+<p class="date">22 January 2022</p>
+</header>
+
+<hr />
+How to store large files in git without lfs … if you have no other option
+<hr />
+<p>So today I was in need of an alternative to <a href="https://git-lfs.github.com/">git lfs</a>. LFS has its own limitations, it needs server support and special handling for authentication via HTTPS.</p>
+<p>I did not have the time to work around these, and the end result was this hack of a process.</p>
+<ol type="1">
+<li>create an orphan tree using <code>git checkout --orphan</code></li>
+<li>store a single file in the tree and commit it</li>
+<li>check the file blob id using <code>git ls-tree &lt;commit-id&gt;</code></li>
+<li>create a tag pointing to the file block <code>git tag &lt;tagname&gt; &lt;blob-id&gt;</code></li>
+<li>push the tag upstream using <code>git push origin --tags</code></li>
+</ol>
+<p>To retrieve the file you can then use:</p>
+<pre><code>$ git cat-file blob &lt;tagname&gt; &gt; filename</code></pre>
+<p>This does NOT address all issues that git-lfs does, but at least the file is a single object and requires zero support on the server side.</p>
+<p>The downside is that a git clone is still expensive, but at least you can manually delete those files. I have not checked yet, but maybe a combination of <code>git clone --no-tags</code> or <code>--single-branch</code> can avoid the expensive fetch.</p>
+</body>
+</html>
