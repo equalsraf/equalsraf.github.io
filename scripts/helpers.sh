@@ -1,3 +1,5 @@
+#!/bin/sh
+set -ue
 
 # Generates a small html snippet for an index page, from files
 # in articles/
@@ -39,3 +41,16 @@ EOF
 </html>
 EOF
 }
+
+
+# Wrapper around pandocpaper
+function paper {
+	INPUT_FILE=$1
+	NAME=$(basename $(dirname $INPUT_FILE))
+	make -f ~/Code/pandocpaper/Makefile INPUT_FILE=$INPUT_FILE html
+	cp out/html/document.html articles/${NAME}.html
+}
+
+FUN=$1
+shift
+$FUN $@

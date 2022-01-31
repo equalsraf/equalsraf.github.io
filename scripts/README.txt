@@ -4,14 +4,12 @@ The website articles are generated using pandocpaper, but the index is generated
 Adding or updating an article works as follows
 
 ```sh
-$ make -f ../pandocpaper/Makefile INPUT_FILE=../pandocpaper/document.md html
-(...)
-$ cp out/html/document.html articles/filename.html
+$ scripts/helpers.sh paper path/to/filename.md
 ```
 
 and then to update the index
 
 ```sh
-$ source scripts/helpers.sh && webindex
+$ scripts/helpers.sh webindex
 ```
 
