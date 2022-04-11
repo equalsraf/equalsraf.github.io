@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2022-04-11" />
+  <title>Bootstrapping Linux Systems</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+  <style type="text/css">
+
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; }
+code > span.dt { color: #204a87; }
+code > span.dv { color: #0000cf; }
+code > span.bn { color: #0000cf; }
+code > span.fl { color: #0000cf; }
+code > span.ch { color: #4e9a06; }
+code > span.st { color: #4e9a06; }
+code > span.co { color: #8f5902; font-style: italic; }
+code > span.ot { color: #8f5902; }
+code > span.al { color: #ef2929; }
+code > span.fu { color: #000000; }
+code > span.er { font-weight: bold; }
+
+
+body {
+font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+line-height: 1.7;
+max-width: 42em;
+}
+h1, h2, h3, h4, h5, h6 {
+line-height: 125%;
+}
+h1, h2, h3 {
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2em;
+}
+h2 {
+font-size: 1.8em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+pre, code, kbd, samp {
+font-family: monospace;
+font-size: 0.98em;
+}
+
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+padding: 1em;
+margin: auto;
+background: #fefefe;
+}
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+margin-top: 1em;
+}
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+q { quotes: "\201C" "\201D" "\2018" "\2019"; }
+[lang=de] q {
+quotes: "\00bb" "\00ab" "\203A" "\2039";
+}
+blockquote,
+aside.notes {
+color: #666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+aside.notes {
+color: #999;
+border-left-color: #ffa;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+padding: 0.1em 0.4em;
+
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 2em 0;
+}
+figure img {
+border: none;
+margin: 0 auto 1em;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.byline {
+font-size: 1.2em;
+text-align: center;
+}
+.references a.uri {word-break: break-all;}
+nav.toc ul {
+list-style-type: decimal;
+}
+nav.toc.already-numbered ul {
+}
+nav.toc.already-numbered > ul {
+padding: 0;
+}
+nav#TOC ul {
+list-style-type: none;
+}
+
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+line-height: 1.2;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 25mm 30mm 25mm 20mm;
+}
+@page :right {
+margin: 25mm 20mm 25mm 30mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h1, h2, h3, h4 {
+page-break-after: avoid;
+}
+nav#TOC {
+display: none,
+}
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Bootstrapping Linux Systems</h1>
+<p class="authors">
+	<span class="author">
+
+			<a href="https://raf.zyks.org">
+				Really Absurd Formulations
+				</a>
+	
+		</span>
+</p>
+<p class="date">April 11, 2022</p>
+</header>
+
+<hr />
+From time to time one has to bootstrap some Linux infrastructure from a reduced starting point, and it is worth having a look at all the little steps to get there.
+<hr />
+<h1 data-number="1" id="introduction"><span class="header-section-number">1</span> Introduction</h1>
+<p>Recently I spent some time thinking about bootstraping Linux systems. This may or may not be easy depending where you are starting from and what kind of systems do you want to build.</p>
+<p>The goal is not to build your own Linux distribution from source, but to bootstrap the necessary infrastructure so you can build Linux based software. In order to do that you may need a physical machine, or a virtual one, or maybe a container is enough.</p>
+<h1 data-number="2" id="getting-started"><span class="header-section-number">2</span> Getting started</h1>
+<p>First some assumptions to get us started:</p>
+<ol type="1">
+<li>I am starting from a bare metal installation, with access to local Linux distribution mirror (no public Docker registries or similar)</li>
+<li>The end game is to be able to run and deploy Linux containers</li>
+<li>I also want to be able to build VMs because some uses cases cannot use containers</li>
+<li>I’ll be using RPM based distros for actual examples, but I have taken a similar approach in Debian</li>
+<li>I’ll try to avoid relying on elevated permissions (sudo, etc) or at least flag them</li>
+</ol>
+<p>The typical process to bootstrap yourself looks like Figure <a href="#fig:old">1</a> (dashed lines represent dependencies). In theory you could pick the starting point you prefer to get to a working container, but I will take the long route, because I will start by assuming that</p>
+<ul>
+<li>you cannot build a container without elevated privileges</li>
+<li>but you can build and run a VM</li>
+<li>with your own VM you can build containers within</li>
+</ul>
+<p>Later I will relax these, but with them in place we can have a look at the big picture (<a href="#fig:old">1</a>).</p>
+<div id="fig:old" class="fignos">
+<figure>
+<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8IS0tIEdlbmVyYXRlZCBieSBncmFwaHZpeiB2ZXJzaW9uIDIuNDkuMyAoMCkKIC0tPgo8IS0tIFBhZ2VzOiAxIC0tPgo8c3ZnIHdpZHRoPSI4MDlwdCIgaGVpZ2h0PSIyMjhwdCIKIHZpZXdCb3g9IjAuMDAgMC4wMCA4MDkuMDAgMjI4LjAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KPGcgaWQ9ImdyYXBoMCIgY2xhc3M9ImdyYXBoIiB0cmFuc2Zvcm09InNjYWxlKDEgMSkgcm90YXRlKDApIHRyYW5zbGF0ZSg0IDIyNCkiPgo8cG9seWdvbiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJ0cmFuc3BhcmVudCIgcG9pbnRzPSItNCw0IC00LC0yMjQgODA1LC0yMjQgODA1LDQgLTQsNCIvPgo8IS0tIHN0YXJ0IC0tPgo8ZyBpZD0ibm9kZTEiIGNsYXNzPSJub2RlIj4KPHRpdGxlPnN0YXJ0PC90aXRsZT4KPGVsbGlwc2UgZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIGN4PSIyMiIgY3k9Ii0yMiIgcng9IjE4IiByeT0iMTgiLz4KPGVsbGlwc2UgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgY3g9IjIyIiBjeT0iLTIyIiByeD0iMjIiIHJ5PSIyMiIvPgo8L2c+CjwhLS0gc3RlcDAgLS0+CjxnIGlkPSJub2RlMiIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+c3RlcDA8L3RpdGxlPgo8cG9seWdvbiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjMxNywtNDAgMTE3LC00MCAxMTcsLTQgMzE3LC00IDMxNywtNDAiLz4KPHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMjE3IiB5PSItMTguMyIgZm9udC1mYW1pbHk9IlRpbWVzLHNlcmlmIiBmb250LXNpemU9IjE0LjAwIj5CdWlsZCBCYXJlIE1ldGFsIExpbnV4IE1hY2hpbmU8L3RleHQ+CjwvZz4KPCEtLSBzdGFydCYjNDU7Jmd0O3N0ZXAwIC0tPgo8ZyBpZD0iZWRnZTQiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnN0YXJ0JiM0NTsmZ3Q7c3RlcDA8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBkPSJNNDQuMDIsLTIyQzU5Ljc1LC0yMiA4Mi41OSwtMjIgMTA2LjUyLC0yMiIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSIxMDYuODIsLTI1LjUgMTE2LjgyLC0yMiAxMDYuODIsLTE4LjUgMTA2LjgyLC0yNS41Ii8+CjwvZz4KPCEtLSBzdGVwMSAtLT4KPGcgaWQ9Im5vZGU0IiBjbGFzcz0ibm9kZSI+Cjx0aXRsZT5zdGVwMTwvdGl0bGU+Cjxwb2x5Z29uIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNTg4LC00MCA0MTEsLTQwIDQxMSwtNCA1ODgsLTQgNTg4LC00MCIvPgo8dGV4dCB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB4PSI0OTkuNSIgeT0iLTE4LjMiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+QnVpbGQgTGludXggVmlydHVhbCBNYWNoaW5lPC90ZXh0Pgo8L2c+CjwhLS0gc3RlcDAmIzQ1OyZndDtzdGVwMSAtLT4KPGcgaWQ9ImVkZ2U1IiBjbGFzcz0iZWRnZSI+Cjx0aXRsZT5zdGVwMCYjNDU7Jmd0O3N0ZXAxPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgZD0iTTMxNy4yOSwtMjJDMzQ0LjI2LC0yMiAzNzMuNDUsLTIyIDQwMC4zNSwtMjIiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNDAwLjU1LC0yNS41IDQxMC41NSwtMjIgNDAwLjU1LC0xOC41IDQwMC41NSwtMjUuNSIvPgo8L2c+CjwhLS0gbWlycm9yIC0tPgo8ZyBpZD0ibm9kZTMiIGNsYXNzPSJub2RlIj4KPHRpdGxlPm1pcnJvcjwvdGl0bGU+Cjxwb2x5Z29uIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS1kYXNoYXJyYXk9IjUsMiIgcG9pbnRzPSIyODAsLTIyMCAxNTQsLTIyMCAxNTQsLTE4NCAyODAsLTE4NCAyODAsLTIyMCIvPgo8dGV4dCB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB4PSIyMTciIHk9Ii0xOTguMyIgZm9udC1mYW1pbHk9IlRpbWVzLHNlcmlmIiBmb250LXNpemU9IjE0LjAwIj5Mb2NhbCBEaXN0cm8gTWlycm9yPC90ZXh0Pgo8L2c+CjwhLS0gbWlycm9yJiM0NTsmZ3Q7c3RlcDAgLS0+CjxnIGlkPSJlZGdlMSIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+bWlycm9yJiM0NTsmZ3Q7c3RlcDA8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2UtZGFzaGFycmF5PSI1LDIiIGQ9Ik0yMTcsLTE4My45N0MyMTcsLTE1Mi42NCAyMTcsLTg3Ljk0IDIxNywtNTAuNDkiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iMjIwLjUsLTUwLjI1IDIxNywtNDAuMjUgMjEzLjUsLTUwLjI1IDIyMC41LC01MC4yNSIvPgo8dGV4dCB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB4PSIyMDYuNSIgeT0iLTEwOC4zIiBmb250LWZhbWlseT0iVGltZXMsc2VyaWYiIGZvbnQtc2l6ZT0iMTQuMDAiPklTTzwvdGV4dD4KPC9nPgo8IS0tIG1pcnJvciYjNDU7Jmd0O3N0ZXAxIC0tPgo8ZyBpZD0iZWRnZTIiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPm1pcnJvciYjNDU7Jmd0O3N0ZXAxPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLWRhc2hhcnJheT0iNSwyIiBkPSJNMjQ2LjE4LC0xODMuOTJDMjk3LjIxLC0xNTEuMTcgNDA0LjksLTgyLjA2IDQ2MS42OCwtNDUuNjMiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNDYzLjgxLC00OC40MiA0NzAuMzQsLTQwLjA3IDQ2MC4wMywtNDIuNTMgNDYzLjgxLC00OC40MiIvPgo8dGV4dCB0ZXh0LWFuY2hvcj0ibWlkZGxlIiB4PSIzNjQiIHk9Ii0xMTUuOCIgZm9udC1mYW1pbHk9IlRpbWVzLHNlcmlmIiBmb250LXNpemU9IjE0LjAwIj5JU088L3RleHQ+CjwvZz4KPCEtLSBzdGVwMiAtLT4KPGcgaWQ9Im5vZGU1IiBjbGFzcz0ibm9kZSI+Cjx0aXRsZT5zdGVwMjwvdGl0bGU+Cjxwb2x5Z29uIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iODAxLC0xMzAgNjYxLC0xMzAgNjYxLC05NCA4MDEsLTk0IDgwMSwtMTMwIi8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjczMSIgeT0iLTEwOC4zIiBmb250LWZhbWlseT0iVGltZXMsc2VyaWYiIGZvbnQtc2l6ZT0iMTQuMDAiPkJ1aWxkIExpbnV4IENvbnRhaW5lcjwvdGV4dD4KPC9nPgo8IS0tIG1pcnJvciYjNDU7Jmd0O3N0ZXAyIC0tPgo8ZyBpZD0iZWRnZTMiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPm1pcnJvciYjNDU7Jmd0O3N0ZXAyPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLWRhc2hhcnJheT0iNSwyIiBkPSJNMjgwLjAxLC0xOTEuMUMzNzMuMDMsLTE3NC43NSA1NDguNjIsLTE0My44OCA2NTAuNzksLTEyNS45MiIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSI2NTEuNSwtMTI5LjM1IDY2MC43NSwtMTI0LjE3IDY1MC4yOSwtMTIyLjQ2IDY1MS41LC0xMjkuMzUiLz4KPHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iNDk5LjUiIHk9Ii0xNzEuOCIgZm9udC1mYW1pbHk9IlRpbWVzLHNlcmlmIiBmb250LXNpemU9IjE0LjAwIj5QYWNrYWdlczwvdGV4dD4KPC9nPgo8IS0tIHN0ZXAxJiM0NTsmZ3Q7c3RlcDEgLS0+CjxnIGlkPSJlZGdlNiIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+c3RlcDEmIzQ1OyZndDtzdGVwMTwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIGQ9Ik00ODYuMDMsLTQwLjExQzQ2OS40NiwtNzEuMjQgNDczLjk1LC0xMTIgNDk5LjUsLTExMiA1MjIuNTYsLTExMiA1MjguNDYsLTc4LjgxIDUxNy4yMywtNDkuNDYiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNTIwLjMsLTQ3Ljc3IDUxMi45NywtNDAuMTEgNTEzLjkzLC01MC42NiA1MjAuMywtNDcuNzciLz4KPC9nPgo8IS0tIHN0ZXAxJiM0NTsmZ3Q7c3RlcDIgLS0+CjxnIGlkPSJlZGdlNyIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+c3RlcDEmIzQ1OyZndDtzdGVwMjwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIGQ9Ik01NDYuNjcsLTQwLjFDNTgzLjQ3LC01NC41NCA2MzUuMTQsLTc0LjggNjc0LjI1LC05MC4xNCIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSI2NzMuMzIsLTkzLjUzIDY4My45MSwtOTMuOTIgNjc1Ljg4LC04Ny4wMiA2NzMuMzIsLTkzLjUzIi8+CjwvZz4KPC9nPgo8L3N2Zz4K" alt="Figure 1: The classic bootstrap scenario" /><figcaption aria-hidden="true"><span>Figure 1:</span> The classic bootstrap scenario</figcaption>
+</figure>
+</div>
+<h2 data-number="2.1" id="building-a-bare-metal-machine"><span class="header-section-number">2.1</span> Building a bare metal machine</h2>
+<p>Our starting point is that we have some Linux machine or at least we can install one from a local source (DVDs work too). Sadly we cannot avoid the manual labour here, put the DVD in the drive and follow the installation process.</p>
+<p>Once your are done, install packages for virtualization such as kvm, libvirt or virtualbox, these will allow you to run VMs later. You will also need a couple of tools such as mkisofs or 7z.</p>
+<h2 data-number="2.2" id="building-a-vm"><span class="header-section-number">2.2</span> Building a VM</h2>
+<p>Now that this machine is installed we will build VM’s. While there are a couple of ways to go about this I will build installable ISOs for automated VM installation. We will use an already existing ISO which can usually be found in any distribution mirror.</p>
+<p>The process is straightforward:</p>
+<ol type="1">
+<li>Unpack the ISO you already have</li>
+<li>Add autoinst.xml</li>
+<li>Update isolinux.cfg</li>
+<li>(Optional) you may want to extend this to add files to your installation (more packages, config files, ssh keys)</li>
+<li>Regenerate the ISO with the new files (mkisofs)</li>
+<li>Run qemu to install the ISO into a disk image</li>
+</ol>
+<p>First we need to create these two files:</p>
+<ul>
+<li><strong>autoinst.xml</strong> is a AutoYast <span class="citation" data-cites="autoyast"><a href="#ref-autoyast" role="doc-biblioref">[1]</a></span> installation configuration file used to automate installation. RedHat/CentOS uses Kickstart <span class="citation" data-cites="kickstart"><a href="#ref-kickstart" role="doc-biblioref">[2]</a></span> instead.</li>
+<li><strong>isolinux.cfg</strong> is used by the ISOLINUX bootloader and defines the options passed to the kernel including options to enable autoyast or redirect output to the console.</li>
+</ul>
+<p>With these you can control the boot process of your ISO as well as the result of the installation of the ISO. This allows you to automate the entire process of installing the system in a VM.</p>
+<p>My autoinst.xml just uses a single partition, adds the oss and update repos, enables some services, and sets an ssh key for root (the default policy in suse prevents root from using passwords).</p>
+<p>The isolinux.cfg I am using is a modified version of the openSUSE default file, my only changes are the additions of:</p>
+<ul>
+<li>console arguments to use the console port by default</li>
+<li>trigger autoyast on startup</li>
+<li>initialize the network (needed to add repositories and leave a valid config behind)</li>
+<li>reduce the timeout</li>
+<li>enable ssh access during installation (not really needed but sometimes useful)</li>
+</ul>
+<p>These are described in <span class="citation" data-cites="linuxrc"><a href="#ref-linuxrc" role="doc-biblioref">[3]</a></span> and are passed by the boot loader to the kernel which then passes them to init and linuxrc:</p>
+<pre class="cfg"><code>default linux
+serial 0 115200
+
+label linux
+  kernel linux
+  append initrd=initrd splash=silent showopts console=tty0 console=ttyS0,115200 linemode=1 autoyast=cd:/autoinst.xml install=cd:/ ifcfg=*=dhcp  sshd=1 password=password
+
+implicit    1
+prompt      1
+timeout     1</code></pre>
+<p>No special permissions are required to rebuild an ISO file. Here is a script to build a new image from a Tumbleweed ISO.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">readonly</span> <span class="va">ISO</span><span class="op">=</span><span class="va">$(</span><span class="ex">realpath</span> <span class="va">$1)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">readonly</span> <span class="va">VOLUME</span><span class="op">=</span><span class="va">$(</span><span class="ex">isoinfo</span> <span class="at">-d</span> <span class="at">-i</span> <span class="va">${ISO}</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="at">-n</span> <span class="st">&#39;s/Volume id: //p&#39;</span><span class="va">)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">readonly</span> <span class="va">OUT</span><span class="op">=</span><span class="va">$PWD</span>/build/system.iso</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">readonly</span> <span class="va">WORKDIR</span><span class="op">=</span><span class="va">$PWD</span>/build/iso</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">readonly</span> <span class="va">SRC</span><span class="op">=</span>/<span class="va">$PWD</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> <span class="va">${WORKDIR}</span> <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">${WORKDIR}</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">${WORKDIR}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">7z</span> x <span class="va">${ISO}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="va">$SRC</span>/isolinux.cfg <span class="va">$WORKDIR</span>/boot/x86_64/loader/</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="va">$SRC</span>/autoinst.xml <span class="va">$WORKDIR</span>/</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-f</span> <span class="va">${OUT}</span> <span class="kw">||</span> <span class="fu">true</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ex">mkisofs</span> <span class="at">-o</span> <span class="va">${OUT}</span> <span class="at">--input-charset</span> utf-8 <span class="at">-b</span> boot/x86_64/loader/isolinux.bin <span class="at">-c</span> boot.cat <span class="at">--no-emul-boot</span> <span class="at">--boot-load-size</span> 4 <span class="at">--boot-info-table</span> <span class="at">-J</span> <span class="at">-R</span> <span class="at">-V</span> <span class="st">&quot;</span><span class="va">${VOLUME}</span><span class="st">&quot;</span> <span class="va">${WORKDIR}</span></span></code></pre></div>
+<p><strong>Note:</strong> your isolinux file might not be so simple and you may have to generate from templates, or pass more options to mkisofs. One example is CentOS where the ISO label must match the config files.</p>
+<p>To run your installation you use qemu in your system. Remember to assign at least 1G of RAM as the yast installer will not start with less. Once the script terminates the mydisk.raw disk image holds the installed system.</p>
+<pre><code>qemu-img create build/mydisk.raw 4G
+qemu-system-x86_64 -no-reboot -enable-kvm -boot d -cdrom build/system.iso -m 1024 -nic user,hostfwd=tcp::10022-:22 -hda build/mydisk.raw -nographic</code></pre>
+<p><strong>Note:</strong> another way to do this is using <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/virtualization_deployment_and_administration_guide/sect-guest_virtual_machine_installation_overview-creating_guests_with_virt_install">virt-install</a> which does something similar in a system with libvirt.</p>
+<p>And that is it, you can now boot your new system with:</p>
+<pre><code>qemu-system-x86_64  -enable-kvm -boot c -m 1024 -hda build/mydisk.raw  -nographic -nic user,hostfwd=tcp::10022-:22</code></pre>
+<p>The added hostfwd option is meant to allow me to access the VM from the host so I can automate other work. In a libvirt setup you can get the VM dynamic IP from virsh and connect over the bridge.</p>
+<h2 data-number="2.3" id="building-a-container"><span class="header-section-number">2.3</span> Building a Container</h2>
+<p>Now that we have a VM we can do pretty much whatever we want inside, so lets build a container.</p>
+<p>There are plenty of container tools in Linux, Docker being the most well known. But for this example I will use buildah<span class="citation" data-cites="buildah"><a href="#ref-buildah" role="doc-biblioref">[4]</a></span>.</p>
+<p>My preference for buildah is because it enables regular users to run containers without a daemon or special privileges (other than subuid/gid settings for your user). Furthermore, users in these containers can appear to be root (uid 0) with file permissions being mapped to a different uid/gid outside the container. This means these container can be reused to build anything that requires root. The tool behind buildah that creates these containers is actually runc, buildah hides some of the neat details behind each runc setting.</p>
+<p>For this description I will assume the running user has no root privileges or sudo, but he has a working buildah.</p>
+<p>For starters let us assume we have nothing - not a single file in our container. But we can’t bootstrap a Linux system out of thin air unless we are compiling from source. What we can do is call the tools in our host system to install packages in a separate root filesystem. In openSUSE the zypper package installer supports this via the <em>–root</em> option, but it does require root permissions to run, because package files expect to be created with certain permissions.</p>
+<p>However this is where buildah can help us. Without going into details - the <em>buildah unshare</em> command allows you to run a container of sorts, where the filesystem is the same as your host filesystem, but the running user appears to be root even if this is started by your regular user. This is enough to fool zypper and other tools, provided you not actually try to write files your user cannot write in your host.</p>
+<p>So if I were to execute something like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">buildah</span> unshare ./buildcontainer.sh</span></code></pre></div>
+<p>The <em>buildcontainer.sh</em> script could execute commands as if it were root (minus the actual root permissions). So the following is a script that could bootstrap a container root filesystem</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">readonly</span> <span class="va">CONTAINER</span><span class="op">=</span><span class="va">$(</span><span class="ex">buildah</span> from scratch<span class="va">)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">readonly</span> <span class="va">MOUNT</span><span class="op">=</span><span class="va">$(</span><span class="ex">buildah</span> mount <span class="va">$CONTAINER)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">readonly</span> <span class="va">OPTS</span><span class="op">=</span><span class="st">&quot;--root </span><span class="va">$MOUNT</span><span class="st"> --gpg-auto-import --non-interactive&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">zypper</span> <span class="va">$OPTS</span> ar http://download.opensuse.org/tumbleweed/repo/oss/ oss</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">zypper</span> <span class="va">$OPTS</span> ar http://download.opensuse.org/update/tumbleweed/</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">zypper</span> <span class="va">$OPTS</span> ref</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ex">zypper</span> <span class="va">$OPTS</span> install <span class="at">-y</span> openSUSE-release-appliance-docker</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">buildah</span> commit <span class="at">--rm</span> <span class="at">--squash</span> <span class="va">$CONTAINER</span> myimage</span></code></pre></div>
+<p>First the buildah commands create an empty container (<em>scratch</em>) and mount its root so we can access its files. Second the zypper commands are a standard way to install a new rootfs in a different path. And finally the container is destroyed, but saved as an image we can reuse for other containers.</p>
+<p>Outside of the unshare container, you list the image you created with the <em>buildah images</em> command, or export it to a tarball with the <em>buildah push</em> command. The <em>buildah from</em> command can create new containers from images, and <em>buildah run</em> will run the containers. Finally it is worth mentioning the <em>buildah config</em> command which can set settings for a container, such as its environment or working directory.</p>
+<h1 data-number="3" id="extra-points"><span class="header-section-number">3</span> Extra points</h1>
+<p>Now we can think about what we did so far, and can be improved or changed. Once you realize that you can bypass some steps our original drawing turns into something like Figure <a href="#fig:new">2</a>.</p>
+<div id="fig:new" class="fignos">
+<figure>
+<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8IS0tIEdlbmVyYXRlZCBieSBncmFwaHZpeiB2ZXJzaW9uIDIuNDkuMyAoMCkKIC0tPgo8IS0tIFBhZ2VzOiAxIC0tPgo8c3ZnIHdpZHRoPSI2MjVwdCIgaGVpZ2h0PSIzNzFwdCIKIHZpZXdCb3g9IjAuMDAgMC4wMCA2MjUuMDAgMzcxLjAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KPGcgaWQ9ImdyYXBoMCIgY2xhc3M9ImdyYXBoIiB0cmFuc2Zvcm09InNjYWxlKDEgMSkgcm90YXRlKDApIHRyYW5zbGF0ZSg0IDM2NykiPgo8cG9seWdvbiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJ0cmFuc3BhcmVudCIgcG9pbnRzPSItNCw0IC00LC0zNjcgNjIxLC0zNjcgNjIxLDQgLTQsNCIvPgo8IS0tIHN0YXJ0IC0tPgo8ZyBpZD0ibm9kZTEiIGNsYXNzPSJub2RlIj4KPHRpdGxlPnN0YXJ0PC90aXRsZT4KPGVsbGlwc2UgZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIGN4PSIyMiIgY3k9Ii0xNDUiIHJ4PSIxOCIgcnk9IjE4Ii8+CjxlbGxpcHNlIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIGN4PSIyMiIgY3k9Ii0xNDUiIHJ4PSIyMiIgcnk9IjIyIi8+CjwvZz4KPCEtLSBzdGVwMCAtLT4KPGcgaWQ9Im5vZGUyIiBjbGFzcz0ibm9kZSI+Cjx0aXRsZT5zdGVwMDwvdGl0bGU+Cjxwb2x5Z29uIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iMzE3LC0xNjMgMTE3LC0xNjMgMTE3LC0xMjcgMzE3LC0xMjcgMzE3LC0xNjMiLz4KPHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMjE3IiB5PSItMTQxLjMiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+QnVpbGQgQmFyZSBNZXRhbCBMaW51eCBNYWNoaW5lPC90ZXh0Pgo8L2c+CjwhLS0gc3RhcnQmIzQ1OyZndDtzdGVwMCAtLT4KPGcgaWQ9ImVkZ2U1IiBjbGFzcz0iZWRnZSI+Cjx0aXRsZT5zdGFydCYjNDU7Jmd0O3N0ZXAwPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgZD0iTTQ0LjAyLC0xNDVDNTkuNzUsLTE0NSA4Mi41OSwtMTQ1IDEwNi41MiwtMTQ1Ii8+Cjxwb2x5Z29uIGZpbGw9ImJsYWNrIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjEwNi44MiwtMTQ4LjUgMTE2LjgyLC0xNDUgMTA2LjgyLC0xNDEuNSAxMDYuODIsLTE0OC41Ii8+CjwvZz4KPCEtLSBzdGVwMCYjNDU7Jmd0O3N0ZXAwIC0tPgo8ZyBpZD0iZWRnZTQiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnN0ZXAwJiM0NTsmZ3Q7c3RlcDA8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsdWUiIGQ9Ik0yMDIuMjIsLTE2My4xMUMxODQuMDUsLTE5NC4yNCAxODguOTgsLTIzNSAyMTcsLTIzNSAyNDIuNCwtMjM1IDI0OC44MiwtMjAxLjUyIDIzNi4yOCwtMTcyLjA4Ii8+Cjxwb2x5Z29uIGZpbGw9ImJsdWUiIHN0cm9rZT0iYmx1ZSIgcG9pbnRzPSIyMzkuMzksLTE3MC40OCAyMzEuNzgsLTE2My4xMSAyMzMuMTQsLTE3My42MiAyMzkuMzksLTE3MC40OCIvPgo8L2c+CjwhLS0gc3RlcDEgLS0+CjxnIGlkPSJub2RlNCIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+c3RlcDE8L3RpdGxlPgo8cG9seWdvbiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjYxNywtMzYgNDQwLC0zNiA0NDAsMCA2MTcsMCA2MTcsLTM2Ii8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjUyOC41IiB5PSItMTQuMyIgZm9udC1mYW1pbHk9IlRpbWVzLHNlcmlmIiBmb250LXNpemU9IjE0LjAwIj5CdWlsZCBMaW51eCBWaXJ0dWFsIE1hY2hpbmU8L3RleHQ+CjwvZz4KPCEtLSBzdGVwMCYjNDU7Jmd0O3N0ZXAxIC0tPgo8ZyBpZD0iZWRnZTYiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnN0ZXAwJiM0NTsmZ3Q7c3RlcDE8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBkPSJNMjMyLjUxLC0xMjYuNzZDMjY3LjQsLTk5LjI4IDM1OC4zOCwtNTcuNjEgNDMwLjE2LC0zMi42NiIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSI0MzEuMzgsLTM1Ljk1IDQzOS43MSwtMjkuNDEgNDI5LjEyLC0yOS4zMiA0MzEuMzgsLTM1Ljk1Ii8+CjwvZz4KPCEtLSBzdGVwMiAtLT4KPGcgaWQ9Im5vZGU1IiBjbGFzcz0ibm9kZSI+Cjx0aXRsZT5zdGVwMjwvdGl0bGU+Cjxwb2x5Z29uIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNTk4LjUsLTIzNCA0NTguNSwtMjM0IDQ1OC41LC0xOTggNTk4LjUsLTE5OCA1OTguNSwtMjM0Ii8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjUyOC41IiB5PSItMjEyLjMiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+QnVpbGQgTGludXggQ29udGFpbmVyPC90ZXh0Pgo8L2c+CjwhLS0gc3RlcDAmIzQ1OyZndDtzdGVwMiAtLT4KPGcgaWQ9ImVkZ2U3IiBjbGFzcz0iZWRnZSI+Cjx0aXRsZT5zdGVwMCYjNDU7Jmd0O3N0ZXAyPC90aXRsZT4KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgZD0iTTMxNy4yLC0xNDIuMzdDMzgwLjg4LC0xNTMuMTMgNDU5LjAyLC0xNzQuMSA0OTkuNzgsLTE5My4zOSIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSI0OTguMzMsLTE5Ni41OCA1MDguODMsLTE5Ny45OSA1MDEuNSwtMTkwLjM0IDQ5OC4zMywtMTk2LjU4Ii8+CjwvZz4KPCEtLSBtaXJyb3IgLS0+CjxnIGlkPSJub2RlMyIgY2xhc3M9Im5vZGUiPgo8dGl0bGU+bWlycm9yPC90aXRsZT4KPHBvbHlnb24gZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLWRhc2hhcnJheT0iNSwyIiBwb2ludHM9IjI4MCwtMzYxIDE1NCwtMzYxIDE1NCwtMzI1IDI4MCwtMzI1IDI4MCwtMzYxIi8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjIxNyIgeT0iLTMzOS4zIiBmb250LWZhbWlseT0iVGltZXMsc2VyaWYiIGZvbnQtc2l6ZT0iMTQuMDAiPkxvY2FsIERpc3RybyBNaXJyb3I8L3RleHQ+CjwvZz4KPCEtLSBtaXJyb3ImIzQ1OyZndDtzdGVwMCAtLT4KPGcgaWQ9ImVkZ2UxIiBjbGFzcz0iZWRnZSI+Cjx0aXRsZT5taXJyb3ImIzQ1OyZndDtzdGVwMDwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS1kYXNoYXJyYXk9IjUsMiIgZD0iTTIxNywtMzI0Ljc3QzIxNywtMjkwLjE4IDIxNywtMjE0Ljc5IDIxNywtMTczLjQ4Ii8+Cjxwb2x5Z29uIGZpbGw9ImJsYWNrIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjIyMC41LC0xNzMuMjcgMjE3LC0xNjMuMjcgMjEzLjUsLTE3My4yNyAyMjAuNSwtMTczLjI3Ii8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjIwNi41IiB5PSItMjQwLjMiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+SVNPPC90ZXh0Pgo8L2c+CjwhLS0gbWlycm9yJiM0NTsmZ3Q7c3RlcDEgLS0+CjxnIGlkPSJlZGdlMiIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+bWlycm9yJiM0NTsmZ3Q7c3RlcDE8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2UtZGFzaGFycmF5PSI1LDIiIGQ9Ik0yMzkuNTgsLTMyNC44NkMyNzUuMjYsLTI5NC40OCAzNDguMTMsLTIzMC43NiA0MDQsLTE3MSA0NDMuNDIsLTEyOC44MyA0ODQuNjUsLTc1LjYyIDUwOC4xLC00NC4zNCIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSI1MTEuMDUsLTQ2LjI0IDUxNC4yMiwtMzYuMTMgNTA1LjQ0LC00Mi4wNiA1MTEuMDUsLTQ2LjI0Ii8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjM3OC41IiB5PSItMjIzLjgiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+SVNPPC90ZXh0Pgo8L2c+CjwhLS0gbWlycm9yJiM0NTsmZ3Q7c3RlcDIgLS0+CjxnIGlkPSJlZGdlMyIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+bWlycm9yJiM0NTsmZ3Q7c3RlcDI8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2UtZGFzaGFycmF5PSI1LDIiIGQ9Ik0yODAuMzIsLTM1MS4xQzMxNy42NSwtMzUzLjM3IDM2NS4yMywtMzUxLjYyIDQwNCwtMzM1IDQ0OS4zOSwtMzE1LjU1IDQ4Ny44LC0yNzEuMzYgNTA5LjIyLC0yNDIuNjQiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNTEyLjI2LC0yNDQuNDIgNTE1LjMyLC0yMzQuMjcgNTA2LjYsLTI0MC4zIDUxMi4yNiwtMjQ0LjQyIi8+Cjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjM3OC41IiB5PSItMzUxLjgiIGZvbnQtZmFtaWx5PSJUaW1lcyxzZXJpZiIgZm9udC1zaXplPSIxNC4wMCI+UGFja2FnZXM8L3RleHQ+CjwvZz4KPCEtLSBzdGVwMSYjNDU7Jmd0O3N0ZXAwIC0tPgo8ZyBpZD0iZWRnZTkiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnN0ZXAxJiM0NTsmZ3Q7c3RlcDA8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsdWUiIGQ9Ik01MTMuMTcsLTM2LjFDNDgwLjI3LC02Mi4xMiAzOTYuNzgsLTEwMC45NCAzMjYuOTYsLTEyNi4yMSIvPgo8cG9seWdvbiBmaWxsPSJibHVlIiBzdHJva2U9ImJsdWUiIHBvaW50cz0iMzI1LjQ1LC0xMjMuMDMgMzE3LjIsLTEyOS42OCAzMjcuOCwtMTI5LjYzIDMyNS40NSwtMTIzLjAzIi8+CjwvZz4KPCEtLSBzdGVwMSYjNDU7Jmd0O3N0ZXAxIC0tPgo8ZyBpZD0iZWRnZTgiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnN0ZXAxJiM0NTsmZ3Q7c3RlcDE8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBkPSJNNTEyLjIsLTM2LjExQzQ5Mi4xNiwtNjcuMjQgNDk3LjU5LC0xMDggNTI4LjUsLTEwOCA1NTYuNTEsLTEwOCA1NjMuNiwtNzQuNTIgNTQ5Ljc2LC00NS4wOCIvPgo8cG9seWdvbiBmaWxsPSJibGFjayIgc3Ryb2tlPSJibGFjayIgcG9pbnRzPSI1NTIuNzEsLTQzLjE3IDU0NC44LC0zNi4xMSA1NDYuNTgsLTQ2LjU2IDU1Mi43MSwtNDMuMTciLz4KPC9nPgo8IS0tIHN0ZXAxJiM0NTsmZ3Q7c3RlcDIgLS0+CjxnIGlkPSJlZGdlMTAiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnN0ZXAxJiM0NTsmZ3Q7c3RlcDI8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBkPSJNNTUwLjYzLC0zNi4xOEM2MDcuMDYsLTg3LjcyIDYwOS41MSwtMTM5LjI1IDU1OCwtMTkwLjc5Ii8+Cjxwb2x5Z29uIGZpbGw9ImJsYWNrIiBzdHJva2U9ImJsYWNrIiBwb2ludHM9IjU1NS41NCwtMTg4LjMgNTUwLjczLC0xOTcuNzQgNTYwLjM4LC0xOTMuMzYgNTU1LjU0LC0xODguMyIvPgo8L2c+CjwhLS0gc3RlcDImIzQ1OyZndDtzdGVwMCAtLT4KPGcgaWQ9ImVkZ2UxMyIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+c3RlcDImIzQ1OyZndDtzdGVwMDwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmx1ZSIgZD0iTTQ1OC4yMywtMjIzLjA1QzM5MS4zOCwtMjE0LjgxIDI5My41MSwtMTkwLjE1IDI0NS45OCwtMTY3LjczIi8+Cjxwb2x5Z29uIGZpbGw9ImJsdWUiIHN0cm9rZT0iYmx1ZSIgcG9pbnRzPSIyNDcuNCwtMTY0LjUzIDIzNi44OSwtMTYzLjEzIDI0NC4yNCwtMTcwLjc3IDI0Ny40LC0xNjQuNTMiLz4KPC9nPgo8IS0tIHN0ZXAyJiM0NTsmZ3Q7c3RlcDEgLS0+CjxnIGlkPSJlZGdlMTEiIGNsYXNzPSJlZGdlIj4KPHRpdGxlPnN0ZXAyJiM0NTsmZ3Q7c3RlcDE8L3RpdGxlPgo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBkPSJNNTA2LjI3LC0xOTcuNzRDNDQ5LjkxLC0xNDYuMiA0NDcuNTIsLTk0LjY2IDQ5OS4wOSwtNDMuMTIiLz4KPHBvbHlnb24gZmlsbD0iYmxhY2siIHN0cm9rZT0iYmxhY2siIHBvaW50cz0iNTAxLjU1LC00NS42MSA1MDYuMzcsLTM2LjE4IDQ5Ni43MSwtNDAuNTUgNTAxLjU1LC00NS42MSIvPgo8L2c+CjwhLS0gc3RlcDImIzQ1OyZndDtzdGVwMiAtLT4KPGcgaWQ9ImVkZ2UxMiIgY2xhc3M9ImVkZ2UiPgo8dGl0bGU+c3RlcDImIzQ1OyZndDtzdGVwMjwvdGl0bGU+CjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0icmVkIiBkPSJNNTEyLjIsLTIzNC4xMUM0OTIuMTYsLTI2NS4yNCA0OTcuNTksLTMwNiA1MjguNSwtMzA2IDU1Ni41MSwtMzA2IDU2My42LC0yNzIuNTIgNTQ5Ljc2LC0yNDMuMDgiLz4KPHBvbHlnb24gZmlsbD0icmVkIiBzdHJva2U9InJlZCIgcG9pbnRzPSI1NTIuNzEsLTI0MS4xNyA1NDQuOCwtMjM0LjExIDU0Ni41OCwtMjQ0LjU2IDU1Mi43MSwtMjQxLjE3Ii8+CjwvZz4KPC9nPgo8L3N2Zz4K" alt="Figure 2: Circular bootstraping" /><figcaption aria-hidden="true"><span>Figure 2:</span> Circular bootstraping</figcaption>
+</figure>
+</div>
+<h2 data-number="3.1" id="cant-i-just-build-a-container-w-buildah-and-skip-everything-else"><span class="header-section-number">3.1</span> Can’t I just build a container w/ buildah and skip everything else?</h2>
+<p>Maybe, if you only need containers and whatever system you are using has a working buildah install for your user. There are scenarios where what you really want is a VM, rather than a container.</p>
+<p>This is usually what happens when you are building on top of managed infrastructure and have no dependency on hardware - i.e. you are 100% cloud based.</p>
+<h2 data-number="3.2" id="building-rpm-based-distros-from-debian"><span class="header-section-number">3.2</span> Building RPM based distros from Debian</h2>
+<p>If your starting point is a Debian/Ubuntu system do not worry. There are packages in Debian for Zypper (openSUSE) and Yum (Fedora/RHEL) as well as buildah. Based on these you should be able to build your VM or Container for those distribution even if you are starting from a Debian machine. However the requirement for additional permissions remains, and that is why you need buildah.</p>
+<p><strong>Note</strong>: Debian’s rpm is patched and used to write to /root/.rpmdb instead of the rootfs.</p>
+<h2 data-number="3.3" id="missing-bits"><span class="header-section-number">3.3</span> Missing bits</h2>
+<p>There a few obvious arrows missing from the plan in <a href="#fig:new">2</a> to make a full mesh, which I highlighted in color. If you want to automatically:</p>
+<ul>
+<li>build a container inside a container - this might be possible depending on your buildah setup</li>
+<li>build a new bare metal host from either a VM or another container requires the ability to serve DHCP/PXE, which likely requires some additional network permissions</li>
+</ul>
+<p>These are useful if you want to automate this whole process. The process of building a container within a container should be very similar to building a regular container.</p>
+<p>Building bare metal machines is usually more complicated and requires a working PXE DHCP setup in your network. But once that works it should be similar to the process for the VM - it boots a CD with autoyast and performs automated installation - the main difference is that it cannot auto poweroff at the end.</p>
+<h1 data-number="4" id="conclusions"><span class="header-section-number">4</span> Conclusions</h1>
+<p>This takes us through a couple of tools to bootstrap some infrastructure from scratch. Even if you don’t care about all possible combinations, I think it is useful to show the full picture, after all most of our problems are solved by adding one more indirection (i.e. one more VM or bare metal).</p>
+<p>I did some variation of this a few times for <em>$DAYJOB</em>. You tend to do it over and over once some key component in your infrastructure changes enough.</p>
+<p>One aspect I have not touched on is how this relates to CI and deployment infrastructure, but that is probably an article on its own. All these VMs or containers need to be stored somewhere and deployed at some point. But I will leave that for another time.</p>
+<h1 class="unnumbered" id="references">References</h1>
+<div id="refs" class="references csl-bib-body" role="doc-bibliography">
+<div id="ref-autoyast" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline"><span>“<span>AutoYaST Guide</span>.”</span> <a href="https://doc.opensuse.org/projects/autoyast/">https://doc.opensuse.org/projects/autoyast/</a></div>
+</div>
+<div id="ref-kickstart" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline"><span>“<span>Kickstart Syntax Reference</span>.”</span> <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/installation_guide/sect-kickstart-syntax">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/installation_guide/sect-kickstart-syntax</a></div>
+</div>
+<div id="ref-linuxrc" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline"><span>“<span class="nocase">openSUSE SDB:Linuxrc</span>.”</span> <a href="https://en.opensuse.org/SDB:Linuxrc">https://en.opensuse.org/SDB:Linuxrc</a></div>
+</div>
+<div id="ref-buildah" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline"><span>“<span class="nocase">Buildah - a tool that facilitates building container images</span>.”</span> <a href="https://github.com/containers/buildah">https://github.com/containers/buildah</a></div>
+</div>
+</div>
+</body>
+</html>
