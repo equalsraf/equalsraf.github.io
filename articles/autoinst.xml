@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!DOCTYPE profile>
+<profile xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+
+ <general>
+   <mode>
+    <confirm config:type="boolean">false</confirm>
+    <second_stage config:type="boolean">false</second_stage>
+    <final_halt config:type="boolean">false</final_halt>
+   </mode>
+   <self_update config:type="boolean">false</self_update>
+   <proposals config:type="list">
+    <proposal>partitions_proposal</proposal>
+   </proposals>
+ </general>
+
+ <bootloader>
+  <loader_type>grub2</loader_type>
+  <global>
+   <boot_mbr>true</boot_mbr>
+   <append>console=tty0 console=ttyS0,115200</append>
+   <terminal>serial</terminal>
+  </global>
+ </bootloader>
+
+ <partitioning config:type="list">
+   <drive>
+     <use>all</use>
+     <partitions config:type="list">
+       <partition>
+         <mount>/</mount>
+         <size>max</size>
+       </partition>
+     </partitions>
+   </drive>
+  </partitioning>
+
+
+  <add-on t="map">
+    <add_on_others t="list">
+      <listentry t="map">
+        <alias>oss</alias>
+        <media_url>http://download.opensuse.org/tumbleweed/repo/oss/</media_url>
+        <name>Main Repository (OSS)</name>
+        <priority t="integer">99</priority>
+        <product_dir>/</product_dir>
+      </listentry>
+      <listentry t="map">
+        <alias>update</alias>
+        <media_url>http://download.opensuse.org/update/tumbleweed/</media_url>
+        <name>Update</name>
+        <priority t="integer">99</priority>
+        <product_dir>/</product_dir>
+      </listentry>
+    </add_on_others>
+  </add-on>
+
+  <software t="map">
+    <install_recommended t="boolean">true</install_recommended>
+    <instsource/>
+    <packages t="list">
+      <package>openssh-server</package>
+      <package>wicked</package>
+    </packages>
+    <products t="list">
+      <product>openSUSE</product>
+    </products>
+  </software>
+
+  <files config:type="list">
+    <file>
+      <file_path>/root/.ssh/</file_path>
+    </file>
+    <file>
+      <file_path>/root/.ssh/authorized_keys</file_path>
+      <file_contents>
+  <![CDATA[
+ssh-ed25519 AAAA...your ssh key
+  ]]>
+      </file_contents>
+    </file>
+  </files>
+
+ <users config:type="list">
+   <user>
+       <encrypted config:type="boolean">false</encrypted>
+       <uid>0</uid>
+       <gid>0</gid>
+       <user_password>password</user_password>
+       <username>root</username>
+     <forename/>
+     <surname/>
+   </user>
+  </users>
+
+  <services-manager>
+    <default_target>multi-user</default_target>
+    <services>
+      <enable config:type="list">
+        <service>sshd</service>
+        <service>wicked</service>
+      </enable>
+    </services>
+  </services-manager>
+
+  <keep_install_network config:type="boolean">true</keep_install_network>
+  <networking>
+  </networking>
+
+</profile>

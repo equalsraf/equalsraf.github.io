@@ -47,7 +47,7 @@ EOF
 function paper {
 	INPUT_FILE=$1
 	NAME=$(basename $(dirname $INPUT_FILE))
-	make -f ~/Code/pandocpaper/Makefile INPUT_FILE=$INPUT_FILE html
+	make -f ~/Code/equalsraf/pandocpaper/Makefile INPUT_FILE=$INPUT_FILE html
 	cp out/html/document.html articles/${NAME}.html
 }
 
