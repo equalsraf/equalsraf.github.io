@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+    <meta charset="utf-8" />
+    <style type="text/css">
+    	img { max-width: 100%; }
+	html { font-family: sans-serif; }
+	ul { padding-left: 1em }
+	p { text-indent: 1em; }
+	p:first-of-type { text-indent: 0;  }
+	h1 + p { text-indent: 0;  }
+	h2 + p { text-indent: 0;  }
+	h3 + p { text-indent: 0;  }
+	ul + p { text-indent: 0;  }
+        body{
+            margin:auto;
+            max-width:40em;
+            font-size: 100%;
+	    margin-bottom: 4em;
+        }
+	a { display: block; }
+        code{font-family: monospace;}
+    </style>
+</head>
+<body>
+<h1>GUIX containers for Browsers</h1>
+<p>2023-11-04 @equalsraf</p>
+<h2>Introduction</h2>
+<p>GUIX provides the ability to operate different profiles, which consist of a collection of software packages and settings.</p>
+<p>Internally a profile is a series of symlinks into the profile folder and some crafted config files. Using a profile usually means loading a series of environment variables from a shell script stored inside the profile folder.</p>
+<p>For my own purposes I wanted to run linux containers with guix installed packages.</p>
+<p>These serve a variety of purposes, some of them are for development or testing software. They usually require network access and need to run everything from a command line tool, to a full browser.</p>
+<p>This is my current setup to running firefox inside a GUIX container, with some extra tricks to prepopulate the browser profile.</p>
+<h2>guix shell</h2>
+<p>Lets start with guix shell, the mighty environment builder, which will setup our container:</p>
+<pre>
+guix shell -C -N --no-cwd -u user \
+	-E DISPLAY -E XAUTHORITY --share=$XAUTHORITY --expose=/tmp/.X11-unix/ --expose=/dev/dri \
+	-E XDG_RUNTIME_DIR --share=/run/user/$UID/pulse \
+	--expose=/sys \
+	bash coreutils findutils firefox mpv mesa-utils grep -- bash
+</pre>
+<p>The key options here are:</p>
+<ul>
+<li>-C to run an isolated container</li>
+<li>-N to enable network access inside</li>
+<li>--no-cwd to skip mounting the current directory inside the container</li>
+<li>-E to expose environment variables</li>
+<li>--share to mount files in read only mode</li>
+<li>--expose to mount files in write mode</li>
+</ul>
+<p>Some variables need to be set inside the container and mounts need to be set so that X11/pulse can work.</p>
+<ul>
+<li>variables $DISPLAY, $XAUTHORITY and expose /tmp/.X11-unix, /dev/dri are needed for X11 connections</li>
+<li>$XDG_RUNTIME_DIR and the mount for the pulse folder inside is needed to connect to pulseaudio</li>
+<li>/sys needs to be exposed for libdrm to be able to play video</li>
+</ul>
+<p>The UID and paths inside the container are the same as outside, but the username and $HOME folder is not.</p>
+<p>The packages are whatever makes sense for your container, in this case I tested using firefox/mpv/mesa. But it is more convenient to use a manifest file to hold the package list</p>
+<pre>
+(specifications-&gt;manifest '(
+	"firefox"
+	))
+</pre>
+<p>Sadly this was not good enough, my primary issues is that gtk applications seem to crash if they fail to find some assets. This can be reproduced by opening the "Open File" menu item in firefox.</p>
+<p>You can find some issues in the GUIX issue tracker which are similar (like [32835], the bottom line being those programs need a cache to be available whose path is in GDK_PIXBUF_MODULE_FILE, but in our container the variable does not exist nor does the file.</p>
+<p>The missing variable and file are created for guix profiles (guix/guix/profiles.scm), provided gdk-pixbuf is present in the profile so I had to manually add it.</p>
+<p>Here is an example manifest. In this case I used packages-&gt;manifest instead since I have custom packages in there:</p>
+<pre>
+(packages-&gt;manifest
+    (list
+      firefox
+      ungoogled-chromium
+      bash
+      coreutils
+      grep 
+      curl
+      nss-certs
+      findutils
+      my-glibc-locales
+      procps
+      gdk-pixbuf ; needed otherwise gtk apps may crash
+      ))
+</pre>
+<p>So if I want to launch a browser I can do the following</p>
+<pre>
+guix shell -C -N --no-cwd -u user \
+	-E DISPLAY -E XAUTHORITY --share=$XAUTHORITY --expose=/tmp/.X11-unix/ \
+	--expose=/dev/dri \
+	-E XDG_RUNTIME_DIR --share=/run/user/$UID/pulse --expose=/sys \
+	-E TERM \
+	-m ~/Code/machines/browser-manifest.scm \
+	--link-profile \
+	-- firefox
+</pre>
+<p>But I actually want to make sure my profile is a garbage collection root so it does not get thrown away by guix gc later. So this is how I build a profile:</p>
+<pre>
+guix shell -C -N --no-cwd -u user \
+	-m browser-manifest.scm \
+	--link-profile \
+	--root=/var/guix/profiles/per-user/$USER/browser \
+	-- echo
+</pre>
+<p>The call to echo just exits the environment, since I only want to create it in the store.</p>
+<p>To launch the browser point guix shell to the symlink created in the previous step:</p>
+<pre>
+guix shell -C -N --no-cwd -u user \
+	-E DISPLAY -E XAUTHORITY --share=$XAUTHORITY --expose=/tmp/.X11-unix/ \
+	--expose=/dev/dri \
+	-E XDG_RUNTIME_DIR --share=/run/user/$UID/pulse --expose=/sys \
+	-E TERM \
+	--link-profile \
+	--profile=/var/guix/profiles/per-user/$USER/browser \
+	-- firefox
+</pre>
+<h2>Launching preconfigured browsers</h2>
+<p>My main purpose to run the browser in the container is to have disposable browsers, however I still need to load some configurations and extensions otherwise I will get the default browser settings.</p>
+<p>One way to achieve this is to keep a profile folder around between executions of the browser, and share it in the container e.g.</p>
+<pre>
+guix shell -C -N --no-cwd -u user \
+	-E DISPLAY -E XAUTHORITY --share=$XAUTHORITY --expose=/tmp/.X11-unix/ \
+	--expose=/dev/dri \
+	-E XDG_RUNTIME_DIR --share=/run/user/$UID/pulse --expose=/sys \
+	-E TERM \
+	--link-profile \
+	--profile=/var/guix/profiles/per-user/$USER/browser \
+	--share=some/profile/path=browser-profile
+	-- firefox --profile browser-profile
+</pre>
+<p>But this is not exactly what I want, I want to create a fresh profile to avoid the privacy implications of state store in the profile.</p>
+<p>What I need here is to be able to launch firefox with a new profile that holds my user settings and some preselected extensions. There are a few ways to achieve this, but here I'll use my own tool for this, called ffprofilelaunch. This is how you call it:</p>
+<pre>
+ffprofilelaunch --no-fork --user-js=user.js --xpi=ublock_origin.xpi
+</pre>
+<p>This invocation creates a new temporary profile that gets removed once firefox exits. In this case it runs in the foreground (no-fork), copies a given user.js with custom settings to the profile and it installs an XPI browser extension.</p>
+<p>The full command with guix shell looks like this (note the background &amp; at the end):</p>
+<pre>
+guix shell -C -N --no-cwd -u user \
+	-E DISPLAY -E XAUTHORITY --share=$XAUTHORITY --expose=/tmp/.X11-unix/ \
+	--expose=/dev/dri \
+	-E XDG_RUNTIME_DIR --share=/run/user/$UID/pulse --expose=/sys \
+	-E TERM \
+	--link-profile \
+	--profile=/var/guix/profiles/per-user/$USER/browser \
+	--expose=user.js=/home/user/user.js \
+	-- ffprofilelaunch --no-fork --user-js=user.js --xpi=.guix-profile/share/firefox-extensions/ublock_origin.xpi &amp;
+</pre>
+<p>The funny looking extension path inside .guix-profile is there because I have package definitions for XPI files that places them in there, here is one for ublock origin:</p>
+<pre>
+; xpi URL looks like this
+; https://addons.mozilla.org/firefox/downloads/file/4188488/ublock_origin-1.53.0.xpi"
+(define (make-xpi-pkg extname version id sha256hash)
+  (package
+    (name (string-append extname "-xpi"))
+    (version version)
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "https://addons.mozilla.org/firefox/downloads/file/" id "/" extname "-" version ".xpi"))
+        (sha256
+          (base32 sha256hash))))
+        (build-system copy-build-system)
+        (arguments
+          (list
+            #:phases
+            #~ (modify-phases %standard-phases
+              (delete 'unpack))
+            #:install-plan
+            #~'((#$source #$(string-append  "share/firefox-extensions/" extname ".xpi")))))
+          (home-page "https://addons.mozilla.org/firefox/")
+          (synopsis (string-append extname "firefox xpi"))
+          (description "")
+          (license (fsdg-compatible "dummy"))))
+
+(define ublock-xpi
+  (make-xpi-pkg "ublock_origin" "1.53.0" "4188488"
+    "0jqrc8s3dbx46f0xf40ks3y5l49av105w4q9ik9valzp050lf0sl"))
+</pre>
+<p>Naturally the guix shell manifest needs to be updated to include both ublock-xpi and ffprofilelaunch.</p>
+<h2>References</h2>
+<a href="https://guix.gnu.org/manual/en/html_node/Invoking-guix-shell.html">Invoking guix shell</a>
+<a href="https://codeberg.org/equalsraf/ffprofilelaunch">https://codeberg.org/equalsraf/ffprofilelaunch</a>

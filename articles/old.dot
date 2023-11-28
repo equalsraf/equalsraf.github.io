@@ -1,0 +1,24 @@
+digraph {
+	rankdir=LR;
+	node [shape=box];
+	nodesep=1;
+	ranksep=1;
+
+	start [shape=doublecircle label="" style=filled fillcolor=black];
+	{
+		rank=same;
+		step0 [label="Build Bare Metal Linux Machine"];
+		mirror [label="Local Distro Mirror" style="dashed"];
+	}
+	step1 [label="Build Linux Virtual Machine"];
+	step2 [label="Build Linux Container"];
+
+	mirror -> step0 [style="dashed" label="ISO"];
+	mirror -> step1 [style="dashed" label="ISO"];
+	mirror -> step2 [style="dashed" label="Packages"];
+
+	start -> step0;
+	step0 -> step1;
+	step1 -> step1;
+	step1 -> step2;
+}
