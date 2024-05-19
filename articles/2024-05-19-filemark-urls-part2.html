@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+    <style type="text/css">
+    	img { max-width: 100%; }
+	html { font-family: sans-serif; }
+	ul { padding-left: 1em }
+	p { text-indent: 1em; }
+	p:first-of-type { text-indent: 0;  }
+	h1 + p { text-indent: 0;  }
+	h2 + p { text-indent: 0;  }
+	h3 + p { text-indent: 0;  }
+	ul + p { text-indent: 0;  }
+        body{
+            margin:auto;
+            max-width:40em;
+            font-size: 100%;
+	    margin-bottom: 4em;
+        }
+	a { display: block; }
+        code{font-family: monospace;}
+
+	code + p {
+		text-indent: 0;
+	}
+
+    </style>
+</head>
+<body>
+<h1>Filemark URLs part 2</h1>
+<p>2024-05-19 @equalsraf</p>
+<p>I need a format to store file annotations. That is a list of locations that and associated data such as comment text. Initially I though I needed a higly structured file format for this, but decided against it for a way to embed references in other formats.</p>
+<h2>A URL schema for file marks</h2>
+<p>A file mark points to a location in a file. These are commonly used by text editors however the definition of "location" may vary. Some times it points at a line, other times it includes specific position inside the line.</p>
+<p>Here is a proposal for a URL format for file marks</p>
+<code>
+filemark:?file=/some/path/file.txt&amp;lines=33
+</code>
+<p>This particular example:</p>
+<p>- points to a path some/path/file.txt</p>
+<p>- the mark refers to line 33</p>
+<p>The line argument can be either a line number or a range of two numbers which specifies a range of lines (the range is inclusive).</p>
+<code>
+filemark:?file=/some/path/file.txt&amp;lines=33-45
+</code>
+<p>Other details to note:</p>
+<p>- the first line is line 1</p>
+<p>- file path is encoded as an absolute path</p>
+<h3>File hashes</h3>
+<p>The url can include a hash of the file (md5) so we can identify if the file being marked is correct.</p>
+<code>
+filemark:?file=/some/path/file.txt&amp;lines=33-45&amp;md5=60b725f10c9c85c70d97880dfe8191b3
+</code>
+<p>The hash is for the entire file.</p>
+<h3>Description</h3>
+<p>A description for the marked region</p>
+<code>
+filemark:?file=/some/file.txt&amp;description=TODO
+</code>
+<p>This needs to be url encoded.</p>
+<h3>Links</h3>
+<h2>Implementation</h2>
+<p>I have two pieces of software to implement this. The first one is a vim plugin to generate the URLs, the second is a renderer that converts gemtext files with these URLs into files with the original source code.</p>
+<p>The vim plugin allows you to:</p>
+<p>- generate URL for a given file</p>
+<p>- generate URL for a range of lines inside a buffer</p>
+<p>The renderer only work with gemtext files, but it can generate both gemtext and markdown as output. It should not be hard adopt the same approach to markdown input. In essence the renderer is a tool that replaces URLs with URLs, or URLs with code blocks (from other files).</p>
+<h2>References</h2>
+<a href='https://codeberg.org/equalsraf/vim-filemark'>vim-filemark plugin</a>
+<a href='https://codeberg.org/equalsraf/filemark'>Filemark renderer cli</a>
+</body>
+</html>
