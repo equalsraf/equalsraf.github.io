@@ -55,10 +55,14 @@ filemark:?file=/some/path/file.txt&amp;lines=33-45&amp;md5=60b725f10c9c85c70d978
 <h3>Description</h3>
 <p>A description for the marked region</p>
 <code>
-filemark:?file=/some/file.txt&amp;description=TODO
+filemark:?file=/some/file.txt&amp;lines=33&amp;description=TODO
 </code>
 <p>This needs to be url encoded.</p>
 <h3>Links</h3>
+<p>A URL with the link attribute is converted into an actual file link instead of code.</p>
+<code>
+filemark:?file=/some/file.txt&amp;lines=1&amp;link
+</code>
 <h2>Implementation</h2>
 <p>I have two pieces of software to implement this. The first one is a vim plugin to generate the URLs, the second is a renderer that converts gemtext files with these URLs into files with the original source code.</p>
 <p>The vim plugin allows you to:</p>
