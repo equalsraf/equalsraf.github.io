@@ -37,15 +37,19 @@
 filemark:?file=/some/path/file.txt&amp;lines=33
 </code>
 <p>This particular example:</p>
-<p>- points to a path some/path/file.txt</p>
-<p>- the mark refers to line 33</p>
+<ul>
+<li>points to a path some/path/file.txt</li>
+<li>the mark refers to line 33</li>
+</ul>
 <p>The line argument can be either a line number or a range of two numbers which specifies a range of lines (the range is inclusive).</p>
 <code>
 filemark:?file=/some/path/file.txt&amp;lines=33-45
 </code>
 <p>Other details to note:</p>
-<p>- the first line is line 1</p>
-<p>- file path is encoded as an absolute path</p>
+<ul>
+<li>the first line is line 1</li>
+<li>file path is encoded as an absolute path</li>
+</ul>
 <h3>File hashes</h3>
 <p>The url can include a hash of the file (md5) so we can identify if the file being marked is correct.</p>
 <code>
@@ -66,8 +70,10 @@ filemark:?file=/some/file.txt&amp;lines=1&amp;link
 <h2>Implementation</h2>
 <p>I have two pieces of software to implement this. The first one is a vim plugin to generate the URLs, the second is a renderer that converts gemtext files with these URLs into files with the original source code.</p>
 <p>The vim plugin allows you to:</p>
-<p>- generate URL for a given file</p>
-<p>- generate URL for a range of lines inside a buffer</p>
+<ul>
+<li>generate URL for a given file</li>
+<li>generate URL for a range of lines inside a buffer</li>
+</ul>
 <p>The renderer only work with gemtext files, but it can generate both gemtext and markdown as output. It should not be hard adopt the same approach to markdown input. In essence the renderer is a tool that replaces URLs with URLs, or URLs with code blocks (from other files).</p>
 <h2>References</h2>
 <a href='https://codeberg.org/equalsraf/vim-filemark'>vim-filemark plugin</a>
