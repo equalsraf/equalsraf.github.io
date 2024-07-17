@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+    <style type="text/css">
+    	img { max-width: 100%; }
+	html { font-family: sans-serif; }
+	ul { padding-left: 1em }
+	p { text-indent: 1em; }
+	p:first-of-type { text-indent: 0;  }
+	h1 + p { text-indent: 0;  }
+	h2 + p { text-indent: 0;  }
+	h3 + p { text-indent: 0;  }
+	ul + p { text-indent: 0;  }
+        body{
+            margin:auto;
+            max-width:40em;
+            font-size: 100%;
+	    margin-bottom: 4em;
+        }
+	a { display: block; }
+        code{font-family: monospace;}
+
+	code + p {
+		text-indent: 0;
+	}
+
+    </style>
+</head>
+<body>
+<h1>Qemu in a Windows host</h1>
+<p>2024-07-11 @equalsraf</p>
+<p>I have several problems with WSL (both version 1 and 2) which led me to abandon it for a more traditional VM setup.</p>
+<p>The problems:</p>
+<ul>
+<li>WSL1 is slow for some things</li>
+<li>WSL1 does not emulate some linux features (since its just a translation layer)</li>
+<li>WSL2 is a real VM (hyper-V) so its heavier</li>
+<li>WSL2 networking setup (NAT or otherwise) does not play nice with my VPN - there are partial workarounds that periodically break, scripts in cron/etc</li>
+<li>the default linux kernel used in WSL2 (built by microsoft) has some kernel features disabled that prevent it from handling older syscalls (we could compile our own)</li>
+<li>file sharing via wsl:// is excruciatingly slow in WSL1</li>
+</ul>
+<p>The trade off here is that qemu user mode network stack is nicer to work with than WSL2 but the downside is file sharing between the host and VM. For performance I'm relying on WHPX support.</p>
+<h2>qemu setup</h2>
+<p>My setup relies on a regular qemu VM. The following need to be passed to qemu</p>
+<ul>
+<li>(-accell whpx) for acceleration through hyper-v</li>
+<li>(-device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22) to expose ssh (port 22) on the host loopback interface</li>
+<li>(-nographic -serial mon:stdio) the usual to disable graphics and use the serial port</li>
+<li>(-smp 8 -m 8192) idle memory consumption is not 8G though</li>
+</ul>
+<p>The two main benefits here are:</p>
+<ul>
+<li>the use of hyper-v acceleration (keeps resource consumption relatively low)</li>
+<li>port forwarding works much better here than with hyper-v tools</li>
+<li>listening ports on the host loopback interface are reachable from the guest</li>
+</ul>
+<h2>Whats missing</h2>
+<p>The main downside of this setup is file sharing, and terminal setup</p>
+<ul>
+<li>qemu does not support 9p/virtfs for windows hosts to share files with the guest</li>
+<li>I'm starting qemu with the console on the serial port - but both the windows terminal and conemu do not work perfectly over this</li>
+<li>AFAIK there is no easy way to run qemu as a native windows service (in the background)</li>
+</ul>
+<p>I don't have a nice solution for file sharing. The best I came up it is</p>
+<ul>
+<li>for files in the host: share folders via whatever protocol you want in the host loopback interface (e.g. regular windows shares or openssh running in the host)</li>
+<li>for files in the guest: I'm currently not doing it at the moment, I just rely on other protocols and hostfwd</li>
+</ul>
+<p>For the terminal issues I just work around them using an ssh connection through the forwarded port. But conemu seems to be a bit better than the windows terminal.</p>
+<h2>OpenSSH server in Windows</h2>
+<p>For the VM to be able to access the host I rely on the OpenSSH server which is reachable from the VM.</p>
+<p>To configure the ssh server in windows</p>
+<ul>
+<li>enable openssh server in windows optional features (add feature -> openssh server)</li>
+<li>enable OpenSSH SSH server in the services manager</li>
+</ul>
+<p>If not set you may want to set the default shell for ssh (from an admin powershell)</p>
+<pre><code>New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force</code></pre>
+<p>The sshd_config file is stored under C:\ProgramData\ssh and you can disable password based auth and restrict the listening interface with</p>
+<pre><code>ListenAddress 127.0.0.1
+PasswordAuthentication no
+PubkeyAuthentication yes</code></pre>
+<p>Key based authentication uses an authorized keys file but its location differs if your user is in the Administrator group:</p>
+<ul>
+<li>.ssh/authorized_keys (in your HOME folder); or</li>
+<li>C:\ProgramData\ssh\administrators_authorized_keys</li>
+</ul>
+<p>The later file needs to have special permissions (see the MS docs in the refs)</p>
+<pre><code>icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"</code></pre>
+<h2>References</h2>
+<a href="https://issues.guix.gnu.org/49613">https://issues.guix.gnu.org/49613</a><a href="https://gitlab.com/qemu-project/qemu/-/issues/974">https://gitlab.com/qemu-project/qemu/-/issues/974</a><a href="https://unix.stackexchange.com/questions/505037/shared-folder-in-qemu-between-windows-host-and-debian-guest">https://unix.stackexchange.com/questions/505037/shared-folder-in-qemu-between-windows-host-and-debian-guest</a><a href="https://learn.microsoft.com/en-us/windows/wsl/networking">https://learn.microsoft.com/en-us/windows/wsl/networking</a><a href="https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_server_configuration">https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_server_configuration</a>
+
+</body>
+</html>
