@@ -1,0 +1,169 @@
+// the origin of the graph is the start of 1998
+graphheight = 10cm
+// year width
+year = 1cm
+// lane height
+lane = 1cm
+
+// named lanes
+
+laptop_lane = lane*3
+bsd_lane = lane*4
+work_lane = lane*5
+debian_lane = lane*6
+void_lane = lane*7
+
+// The year grid
+color = black
+thickness = 0.01cm
+Y1998: line from (0, 0) to (0, graphheight) dashed
+Y1999: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2000: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2001: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2002: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2003: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2004: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2005: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2006: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2007: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2008: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2009: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2010: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2011: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2012: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2013: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2014: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2015: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2016: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2017: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2018: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2019: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2020: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2021: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2022: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2023: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+Y2024: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+ENDYEAR: line from (last.n.x+year, 0) to (last.s.x+year, graphheight) dashed
+
+
+// labels
+text at Y1998.n "1998" ljust
+text at Y1999.n "1999" ljust
+text at Y2000.n "2000" ljust
+text at Y2001.n "2001" ljust
+text at Y2002.n "2002" ljust
+text at Y2003.n "2003" ljust
+text at Y2004.n "2004" ljust
+text at Y2005.n "2005" ljust
+text at Y2006.n "2006" ljust
+text at Y2007.n "2007" ljust
+text at Y2008.n "2008" ljust
+text at Y2009.n "2009" ljust
+text at Y2010.n "2010" ljust
+text at Y2011.n "2011" ljust
+text at Y2012.n "2012" ljust
+text at Y2013.n "2013" ljust
+text at Y2014.n "2014" ljust
+text at Y2015.n "2015" ljust
+text at Y2016.n "2016" ljust
+text at Y2017.n "2017" ljust
+text at Y2018.n "2018" ljust
+text at Y2019.n "2019" ljust
+text at Y2020.n "2020" ljust
+text at Y2020.n "2020" ljust
+text at Y2021.n "2021" ljust
+text at Y2022.n "2022" ljust
+text at Y2023.n "2023" ljust
+text at Y2024.n "2024" ljust
+
+
+// set some options for the graph lines
+thickness = 0.1cm
+
+// circa late 1998 lets start with windows
+color = darkgrey
+
+WINDOWS: dot at (Y1998.x + year*0.75, 0)
+line width 7*year
+WINDOWS1: dot
+
+WINDOWS2: dot at (Y2006.x + 0.5*year, 0) ; line right until even with ENDYEAR
+
+// about 1year later
+color = orange
+REDHAT: dot at (Y1999.x + 0.5*year, lane) ; line width year/6
+color = blue
+SLACKWARE: dot ; line width 7*year ; dot
+
+// laptop and the main track
+color = chocolate
+UBUNTU: dot at (Y2005.x + 0.6*year, laptop_lane) ; line width year
+color = blueviolet
+GENTOO: dot ; line width year
+color = limegreen
+OPENSUSE: dot ; line width 5.2*year
+color = deepskyblue
+FEDORA: dot ; line width year
+color = limegreen
+OPENSUSE2: dot ; line width 2*year
+color = black
+VOID: dot ; line width 3*year
+color = chocolate
+UBUNTU2: dot ; line width year
+color = black
+VOID2: dot ; line width 2*year
+color = limegreen
+OPENSUSE3: dot ; line width 0.4*year
+color = gold
+GUIX: dot ; line right until even with ENDYEAR
+
+// ah BSD
+color = red
+OPENBSD: dot at (Y2002.x + 0.7*year, bsd_lane) ; line width 6*year ;
+OPENBSD1: dot
+OPENBSD2: dot at (Y2012.x + 0.7*year, bsd_lane) ; line right until even with ENDYEAR
+
+// The work laptop lane
+color = pink
+WORK: dot at (Y2018.x + 0.9*year, work_lane) ; line width 3*year ;
+color = gray
+WORK2: line right until even with ENDYEAR
+
+color = brown
+DEBIAN: dot at (Y2012.x + 0.95*year, debian_lane) ; line right until even with Y2023; dot
+color = black
+VOIDPI: dot at (Y2018.x + 0.5*year, void_lane) ; line right until even with Y2023; dot
+
+color = black
+
+
+text at Y1998 "Way way back in the late 80s/90s" "Spectrum and Macintosh SE"
+
+// text labels
+text at DEBIAN.w "Debian on RPi" below ljust
+text at VOIDPI.w "Void on RPi (great cross compile)" below ljust
+
+text at WINDOWS "My parents got a PC, mouse had 2 buttons(???)" above ljust
+text at WINDOWS1 "Removed windows" below ljust
+text at WINDOWS2 "but reinstalled windows for some reason" above ljust
+text at REDHAT "Started w/ Redhat 5.2(4 CDs)" above ljust
+text at SLACKWARE "but RH sucked, switched to Slackware 7" below ljust
+text at UBUNTU "Bought laptop; tried Ubuntu; hated it; moved to Gentoo" ljust above
+text at OPENSUSE "My laptop broke in half, got new one, installed openSUSE" ljust below
+
+text at OPENBSD "OpenBSD 3.2 for firewall/tarpit" below ljust
+text at OPENBSD1 "Powered off OpenBSD machine" above ljust
+text at OPENBSD2 "Nostalgia. VM+APU2 router" below ljust
+// I think i had freebsd dual cpu w/SCSI (cant remember)
+text at OPENBSD "(also FreeBSD ...)" above ljust
+
+
+text at WORK "Work MacOS laptop" below ljust
+text at WORK2.w "and then windows" above ljust
+
+text at (FEDORA.x, lane*2) "Used Fedora - openSUSE 12.x was bad" ljust
+text at (OPENSUSE2.x, lane) "openSUSE/btrfs/system was bad, switch to Void" below ljust
+text at UBUNTU2 "laptop swap (UEFI problem so ubuntu)" ljust below
+text at (VOID2.x, lane*2) "UEFI fixed" ljust
+
+text at OPENSUSE3 "openSUSE briefly then Guix" ljust above
