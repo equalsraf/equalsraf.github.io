@@ -2,33 +2,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
     <style type="text/css">
-    	img { max-width: 100%; }
-	html { font-family: sans-serif; }
-	ul { padding-left: 1em }
-	p { text-indent: 1em; }
-	p:first-of-type { text-indent: 0;  }
-	h1 + p { text-indent: 0;  }
-	h2 + p { text-indent: 0;  }
-	h3 + p { text-indent: 0;  }
-	ul + p { text-indent: 0;  }
+       img { max-width: 100%; }
+       html { font-family: sans-serif; }
+       ul { padding-left: 1em }
+       p { text-indent: 1em; }
+       p:first-of-type { text-indent: 0;  }
+       h1 + p { text-indent: 0;  }
+       h2 + p { text-indent: 0;  }
+       h3 + p { text-indent: 0;  }
+       ul + p { text-indent: 0;  }
         body{
             margin:auto;
             max-width:40em;
             font-size: 100%;
-	    margin-bottom: 4em;
+           margin-bottom: 4em;
         }
-	a { display: block; }
+       a { display: block; }
         code{font-family: monospace;}
 
-	code + p {
-		text-indent: 0;
-	}
+       code + p {
+               text-indent: 0;
+       }
 
     </style>
 </head>
 <body>
 <h1>Qemu in a Windows host</h1>
 <p>2024-07-11 @equalsraf</p>
+<blockquote>UPDATE: 27/08 I have dropped this setup due to qemu issues with hyper-v - it fails to setup cpuid (reports avx2 but no avx) which breaks some code. I'm now using VirtualBox and disabled hyper-v to the same outcome.</blockquote>
 <p>I have several problems with WSL (both version 1 and 2) which led me to abandon it for a more traditional VM setup.</p>
 <p>The problems:</p>
 <ul>
