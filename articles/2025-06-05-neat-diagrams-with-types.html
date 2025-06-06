@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+    <style type="text/css">
+       img { max-width: 100%; }
+       html { font-family: sans-serif; }
+       ul { padding-left: 1em }
+       p { text-indent: 1em; }
+       p:first-of-type { text-indent: 0;  }
+       h1 + p { text-indent: 0;  }
+       h2 + p { text-indent: 0;  }
+       h3 + p { text-indent: 0;  }
+       ul + p { text-indent: 0;  }
+        body{
+            margin:auto;
+            max-width:40em;
+            font-size: 100%;
+           margin-bottom: 4em;
+        }
+       a { display: block; }
+       code{font-family: monospace;}
+
+       code + p {
+               text-indent: 0;
+       }
+
+    </style>
+</head>
+<body>
+<h1>Neat diagrams with Types</h1>
+<p>2025-06-05 @equalsraf</p>
+<p>Here is a bunch of neat stuff I came across in the past year with diagrams and types. Nothing too special, but altogether I think these are useful ways to represent ideas.</p>
+<h2>Types as railroad diagrams</h2>
+<p>Railroad diagrams are often used to represent grammars (BNF), some people call them syntax diagrams because of this. We can also represent types from a programming language.</p>
+<p>Lets consider a couple types in rust (one struct and one enum):</p>
+<pre><code>enum Species {
+	Hooman,
+	Alien,
+}
+
+struct MyRecord {
+	name: String,
+	age: u8,
+	nickname: Option<String>,
+	species: Species,
+}</code></pre>
+<p>Here are a few variations on how these two types can be turned into the diagram. In the first case I use attribute names as node names and types as annotations, while in the second case I do the reverse.</p>
+<img src="myrecord.png" alt="Fig 1: MyRecord struct as railroad diagram">
+<p>The enum is represented as a fork in the road (one of two options you can choose). The Option type is a special case of an enum represented as a path around. Vec is missing but can be represented as a loop back.</p>
+<p>A special note for function types. They are not represented in any special way. I just put their type in the label (e.g. like the u8 earlier).</p>
+<h2>Types as activity diagrams</h2>
+<p>While the previous case is useful to represent structure and order. Some times my types represent work to be done i.e. types map to some activity and I would like to represent parallel work:</p>
+<pre><code>struct ParallelWork {
+	t1: Task,
+	t2: Task,
+}
+
+struct Work {
+	prep: PreliminaryWork,
+	parallel_steps: ParallelWork,
+	inspection: Option<Task>,
+	cleanup: CleanupWork,
+}</code></pre>
+<p>As a railroad this would look like this:</p>
+<img src="work1.png" alt="Fig 2: Work struct as railroad diagram"/>
+<p>which is not wrong but does not encode what I want to emphasize here. Railroad diagrams cannot represent parallel work though, instead I will use an activity diagram for this one.</p>
+<img src="work2.png" alt="Fig 3: Work struct as Activity diagram"/><p>The tricky part here is the fork. Our generator needs some special rules to know that ParallelWork is special and its members are represented as parallel tasks, instead of a sequence of activities.</p>
+<p>The Option type is represented as an optional path (an if statement).</p>
+<p>Now if we remove the special fork rules, the activity diagram is a superset of the railroad diagram. But I think the rail diagram is pretier when it works.</p>
+<h2>Packet diagrams</h2>
+<p>I often have to deal with network packets. It is not unusual for me to spend time in wireshark staring at bytes, or writing tests by generating packets with scapy or parsing packets and validating them.</p>
+<p>Historically there have been lots of tools for this. Latex has the bytefield package. In python you packetdiag (see nwdiag/blockdiag).</p>
+<p>I should note that wireshark has really nice support to render packet diagrams. So instead of staring at an hex dump you can stare at boxes. If your protocol is not supported you can write a dissector in C or lua and them wireshark will draw digrams for your protocols too.</p>
+<p>Scapy has a similar set of features where it can save a packet diagram (plus hexdump) as pdf. Which is a really nice thing to do when your tests fail. Just like wireshark you can extend scapy to support your protocols too.</p>
+<p>You can turn types into a packet diagram too. Very useful when you need to represent memory layout for data structures. But you need some heavy handed tools to get the right size/alignment. e.g. from the GCC manual examples in 15.5</p>
+<pre><code>struct foo {
+  char a;
+  int c;
+  char b;
+};</code></pre>
+<p>Gets turned into this drawing, which shows the padding inside the struct.</p>
+<img src="packet.png" alt="Fig 4: Packet diagram for struct foo"/>
+<h2>Functions as a diagram</h2>
+<p>Function types are weird. I don't find them that useful in diagrams. A function type maps an argument type to a return type, but displaying this in railroad or activity diagram is not very useful.</p>
+<p>The closest type of diagram I can think of is the use of association/aggregation in UML. But it is hard to correctly determine the type of relation in most type systems. e.g. in Rust if the return type is a reference we could infer it is an aggregation/composition but generalizing this for other types seems hard. And in other languages the type system just lacks the information.</p>
+<p>Of course we can punt the problem and just represent everything as an association e.g. for this function</p>
+<pre><code>fn f2(a: A, b: B, c: C) -> D { ... }</code></pre>
+<p>we get something like this diagram:</p>
+<img src="functions.png" alt="Fig 5: Functions as class diagram"/>
+<p>I'm not too fond of this, since it is not more meaningful than the function signature.</p>
+<h2>Final notes</h2>
+<p>I should note that it is hard to have general purpose solutions using these. Implementing a generator that takes a type or a packet and prints a diagram is not too hard. But having display exactly what we want requires either lots of parameters or type annotations.</p>
+<p>For example in your railroad do you want to expand all types or not. Or in the packet do your really want to render all fields, do you need to draw some bit values too?</p>
+<p>The examples here were created with plantuml, except for the struct one which was done in latex with bytefields.</p>
+<h2>References</h2>
+<a href="https://en.wikipedia.org/wiki/Syntax_diagram">Syntax diagram (wikipedia)</a><a href="https://plantuml.com/ebnf">PlantUML EBNF docs</a><a href="https://plantuml.com/activity-diagram-beta">PlantUML Activity docs</a><a href="https://kroki.io/examples.html#bytefield">Bytefield and other examples examples (kroki)</a>
+<a href="https://www.wireshark.org/docs/wsug_html_chunked/ChUsePacketDiagramPaneSection.html">Wireshark packet diagram pane</a><a href="https://wiki.wireshark.org/Lua/Dissectors">Wireshark Lua dissectors</a>
+<a href="https://scapy.readthedocs.io/en/latest/usage.html#graphical-dumps-pdf-ps">Scapy Graphical dumps docs</a><a href="https://scapy.readthedocs.io/en/latest/build_dissect.html">Scapy docs on adding protocol support</a>
+</body>
+</html>
