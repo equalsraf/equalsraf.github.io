@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+    <style type="text/css">
+       img { max-width: 100%; }
+       html { font-family: sans-serif; }
+       ul { padding-left: 1em }
+       p { text-indent: 1em; }
+       p:first-of-type { text-indent: 0;  }
+       h1 + p { text-indent: 0;  }
+       h2 + p { text-indent: 0;  }
+       h3 + p { text-indent: 0;  }
+       ul + p { text-indent: 0;  }
+        body{
+            margin:auto;
+            max-width:40em;
+            font-size: 100%;
+           margin-bottom: 4em;
+        }
+       a { display: block; }
+       code{font-family: monospace;}
+
+       code + p {
+               text-indent: 0;
+       }
+
+    </style>
+</head>
+<body>
+
+<h1>Notes on radicle</h1>
+<p>2026-02-08 @equalsraf</p>
+<p>radicle has been on my TODO list for a long time now, so this weekend I decided to give it a try. Here are some notes in no particular order.</p>
+<ul>
+<li>radicle 1.6.1 here</li>
+</ul>
+<h2>Identity</h2>
+<p>Radicle uses ssh keys as identity mechanism - these are under $RAD_HOME/keys/. They are regular ed25519 keys.</p>
+<p>These seem to be bound to the node. I found this part of the docs a bit confusing, probably because I assumed a NID and DID were two different things, but AFAIT they are the same thing i.e. your public ssh key hash.</p>
+<p>There is also a Repository Identifier (RID) which is the hash of the initial repository metadata document. This is used as repo identifier (e.g. rad:z41HxAqq8z4HPwEFbd88oSVdpWJ35).</p>
+<p>On a side note the RIP documents are easy to read, I actually find them easier than the protocol guide.</p>
+<a href="https://app.radicle.xyz/nodes/iris.radicle.xyz/rad:z3trNYnLWS11cJWC6BbxDs5niGo82/tree/0002-identity.md">RIP 0002 Identity</a><p>A lot of mentions to multi device support online, but it is probably saner to do one key/delegate per device and move on.</p>
+<h2>Storage</h2>
+<p>I should note I started my journey by doing (rad init) on all my existing repos. I did not bother to check what this would do, other than advertising my public repos in the network. Everything worked fine and I can find my repos on some of the web interfaces:</p>
+<ul>
+<li>https://app.radicle.xyz/nodes/iris.radicle.xyz/users/z6MkhckjUFXZp3M1R5ri9axHCX4cNLLdKxG2ZHXHhkED9KBB</li>
+<li>https://search.radicle.xyz/</li>
+</ul>
+<p>There were some consequences that I should have read on before doing it though:</p>
+<ul>
+<li>the current implementation stored a "copy" of my repo under $RAD_HOME/storage/RID</li>
+<li>this repo copy is a bare git repository</li>
+<li>the radicle metadata (delegates, etc) is stored in this repo under refs namespacs (see git refs list)</li>
+<li>the default (rad init) behaviour only copied my main branch, not my tags, or my other branches</li>
+</ul>
+<p>Tags/branches initialization aside. I found this duplication of storage a bit surprising. RIP 0003 explains this "working copy" is connected to the node storage copy via a rad remote i.e. the git remote for pushing is this adddress</p>
+<pre><code>rad://z41HxAqq8z4HPwEFbd88oSVdpWJ35/z6MkhckjUFXZp3M1R5ri9axHCX4cNLLdKxG2ZHXHhkED9KBB
+</code></pre>
+<p>which essentially means push to repo with RID z41HxAqq8z4HPwEFbd88oSVdpWJ35, under the namespace z6MkhckjUFXZp3M1R5ri9axHCX4cNLLdKxG2ZHXHhkED9KBB (my NID). This starts making sense once you realize the rad storage holds one set of references in the repository per each node.</p>
+<a href="https://app.radicle.xyz/nodes/iris.radicle.xyz/rad:z3trNYnLWS11cJWC6BbxDs5niGo82/tree/0003-storage-layout.md">RIP 0003 Storage Layout</a><p>My knee-jerk reaction was to think this working copy could be a simple worktree over the bare repo. But I assume the git-remote-rad helper may be doing something more complicated.</p>
+<a href="https://git-scm.com/docs/git-worktree">git-worktree</a><p>I spotted some similar discussions in the radicle zulip but it seems it would require some deep changes to the storage layout:</p>
+<a href="https://radicle.zulipchat.com/#narrow/channel/369873-Support/topic/push.20without.20using.20the.20remote.20helper">https://radicle.zulipchat.com/#narrow/channel/369873-Support/topic/push.20without.20using.20the.20remote.20helper</a><a href="https://app.radicle.xyz/nodes/rosa.radicle.xyz/rad:z3trNYnLWS11cJWC6BbxDs5niGo82/patches/657af21339fe4117b5f9638d283acc994923ab1b?tab=changes">https://app.radicle.xyz/nodes/rosa.radicle.xyz/rad:z3trNYnLWS11cJWC6BbxDs5niGo82/patches/657af21339fe4117b5f9638d283acc994923ab1b?tab=changes</a><h2>Canonical</h2>
+<p>One aspect I completely missed about radicle was the notion of Canonical references. Radicle metadata includes rules to decide which references are to be considered authoritative for a repositoryy based on data from multiple users. This is dynamic and based on e.g. a minimum threshold of maintainers/delegates saying it is canonical.</p>
+<p>This is an aspect that the user guide only mentions with a very specific example. While the protocol guide explains it better it does not explain how to use it.</p>
+<a href="https://radicle.xyz/guides/protocol#canonical-branches">Canonical Branches in the protocol guide</a><a href="https://app.radicle.xyz/nodes/iris.radicle.xyz/rad:z3trNYnLWS11cJWC6BbxDs5niGo82/tree/0001-heartwood.md#canonicity">Canonicity in RIP 0001</a><p>The guide also hints that only the default branch is used for this. So my current predicament is how to make my release tags for existing repos canonical.</p>
+<p>My questions were partially answered by this blog post with an example for (rad id).</p>
+<a href="https://radicle.xyz/2025/08/12/canonical-references">https://radicle.xyz/2025/08/12/canonical-references</a><p>I ended up editing the document by hand. Not sure if there is a CLI for this.</p>
+<p>Personally I find this both exciting and terrifying. Exciting because it is essentially dynamic access control for Git which is really useful. Terrifying because it is another ACL language inside JSON :).</p>
+<h2>Network connections</h2>
+<p>It looks like not much work took place inside radicle to support more complicated networking setups:</p>
+<ul>
+<li>listen/external address options to setup a listening socket - but no upnp support to punch through a firewall</li>
+<li>there is socks5 proxy which people use to access ToR or I2P nodes</li>
+<li>I did not dig deep into the code but the listen field seems to be an ip socket addr, so no easy support for UNIX sockets (very useful for ToR or other tunnels)</li>
+<li>it would be nice to have a general mechanism to support other transport protocols (like git remote helper for git) that would allow plugging RIDs to other discovery/network protocols</li>
+</ul>
+<p>Concerning that last point I spotted some people doing interesting things online. Personally I would favor something like a tunnel setting for (rad node connect) e.g. rad connect over ssh, unix sockets, pipes from processes.</p>
+<h2>Funny bit</h2>
+<p>rad checkout rad://z41HxAqq8z4HPwEFbd88oSVdpWJ35 is invalid (remove rad:// prefix) but git clone rad://z41HxAqq8z4HPwEFbd88oSVdpWJ35 actually works :D</p>
+<h2>Summary</h2>
+<p>I have a soft spot for decentralized architectures so of course this is cool. I specially like the storage layout allowing all data for all nodes to live in the repo.</p>
+</body>
+</html>
