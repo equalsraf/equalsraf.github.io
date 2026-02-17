@@ -1,0 +1,38 @@
+img { max-width: 100%; }
+html { font-family: sans-serif; }
+ul { padding-left: 1em }
+p { text-indent: 1em; }
+p:first-of-type { text-indent: 0;  }
+h1 + p { text-indent: 0;  }
+h2 + p { text-indent: 0;  }
+h3 + p { text-indent: 0;  }
+ul + p { text-indent: 0;  }
+body{
+    margin:auto;
+    max-width:40em;
+    font-size: 100%;
+   margin-bottom: 4em;
+}
+a { display: block; }
+a:before {
+	content: '=> ';
+}
+
+blockquote {
+	background: #ddd;
+	margin: 0;
+	padding: 2ex 2ex 2ex 5ex;
+}
+
+code{
+	font-family: monospace;
+	white-space: pre-wrap;
+	word-wrap: break-word; 
+	display: block;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+code + p {
+       text-indent: 0;
+}

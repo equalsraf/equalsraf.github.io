@@ -2,25 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
     <meta charset="utf-8" />
-    <style type="text/css">
-    	img { max-width: 100%; }
-	html { font-family: sans-serif; }
-	ul { padding-left: 1em }
-	p { text-indent: 1em; }
-	p:first-of-type { text-indent: 0;  }
-	h1 + p { text-indent: 0;  }
-	h2 + p { text-indent: 0;  }
-	h3 + p { text-indent: 0;  }
-	ul + p { text-indent: 0;  }
-        body{
-            margin:auto;
-            max-width:40em;
-            font-size: 100%;
-	    margin-bottom: 4em;
-        }
-	a { display: block; }
-        code{font-family: monospace;}
-    </style>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 <h1>Bootstrapping Linux Systems</h1>
@@ -78,7 +60,7 @@
 <li>enable ssh access during installation (not really needed but sometimes useful)</li>
 </ul>
 <p>These are described in the linuxrc docs and are passed by the boot loader to the kernel which then passes them to init and linuxrc:</p>
-<pre>
+<pre><code>
 default linux
 serial 0 115200
 
@@ -89,9 +71,9 @@ label linux
 implicit	1
 prompt		1
 timeout		1
-</pre>
+</code></pre>
 <p>No special permissions are required to rebuild an ISO file. Here is a script to build a new image from a Tumbleweed ISO.</p>
-<pre>
+<pre><code>
 readonly ISO=$(realpath $1)
 readonly VOLUME=$(isoinfo -d -i ${ISO} | sed -n 's/Volume id: //p')
 readonly OUT=$PWD/build/system.iso
@@ -108,18 +90,18 @@ cp $SRC/autoinst.xml $WORKDIR/
 
 rm -f ${OUT} || true
 mkisofs -o ${OUT} --input-charset utf-8 -b boot/x86_64/loader/isolinux.bin -c boot.cat --no-emul-boot --boot-load-size 4 --boot-info-table -J -R -V "${VOLUME}" ${WORKDIR}
-</pre>
+</code></pre>
 <p>NOTE: your isolinux file might not be so simple and you may have to generate from templates, or pass more options to mkisofs. One example is CentOS where the ISO label must match the config files.</p>
 <p>To run your installation you use qemu in your system. Remember to assign at least 1G of RAM as the yast installer will not start with less. Once the script terminates the mydisk.raw disk image holds the installed system.</p>
-<pre>
+<pre><code>
 qemu-img create build/mydisk.raw 4G
 qemu-system-x86_64 -no-reboot -enable-kvm -boot d -cdrom build/system.iso -m 1024 -nic user,hostfwd=tcp::10022-:22 -hda build/mydisk.raw -nographic
-</pre>
+</code></pre>
 <p>NOTE: another way to do this is using virt-install which does something similar in a system with libvirt.</p>
 <p>And that is it, you can now boot your new system with:</p>
-<pre>
+<pre><code>
 qemu-system-x86_64  -enable-kvm -boot c -m 1024 -hda build/mydisk.raw  -nographic -nic user,hostfwd=tcp::10022-:22
-</pre>
+</code></pre>
 <p>The added hostfwd option is meant to allow me to access the VM from the host so I can automate other work. In a libvirt setup you can get the VM dynamic IP from virsh and connect over the bridge.</p>
 <h3>Building a Container</h3>
 <p>Now that we have a VM we can do pretty much whatever we want inside, so lets build a container.</p>
@@ -131,11 +113,11 @@ qemu-system-x86_64  -enable-kvm -boot c -m 1024 -hda build/mydisk.raw  -nographi
 <p>In openSUSE the zypper package installer supports this via the *--root* option, but it does require root permissions to run, because package files expect to be created with certain permissions.</p>
 <p>However this is where buildah can help us. Without going into details - the (buildah unshare) command allows you to run a container of sorts, where the filesystem is the same as your host filesystem, but the running user appears to be root even if this is started by your regular user. This is enough to fool zypper and other tools, provided you don't actually try to write files your user cannot write in your host.</p>
 <p>So if I were to execute something like this:</p>
-<pre>
+<pre><code>
 buildah unshare ./buildcontainer.sh
-</pre>
+</code></pre>
 <p>The buildcontainer.sh script could execute commands as if it were root (minus the actual root permissions). So the following is a script that could bootstrap a container root filesystem</p>
-<pre>
+<pre><code>
 readonly CONTAINER=$(buildah from scratch)
 readonly MOUNT=$(buildah mount $CONTAINER)
 readonly OPTS="--root $MOUNT --gpg-auto-import --non-interactive"
@@ -145,7 +127,7 @@ zypper $OPTS ar http://download.opensuse.org/update/tumbleweed/
 zypper $OPTS ref
 zypper $OPTS install -y openSUSE-release-appliance-docker
 buildah commit --rm --squash $CONTAINER myimage
-</pre>
+</code></pre>
 <p>First the buildah commands create an empty container (scratch) and mount its root so we can access its files. Second the zypper commands are a standard way to install a new rootfs in a different path. And finally the container is destroyed, but saved as an image we can reuse for other containers.</p>
 <p>Outside of the unshare container, you list the image you created with the "buildah images" command, or export it to a tarball with the buildah push command. The "buildah from" command can create new containers from images, and "buildah run" will run the containers. Finally "buildah config" command which can set settings for a container, such as its environment or working directory.</p>
 <h2>Extra points</h2>
