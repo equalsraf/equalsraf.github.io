@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<h1>What is so cool about the wiredtiger database</h1>
+<p>2026-05-03 @equalsraf</p>
+<p>Wiredtiger is a NoSQL database:</p>
+<ul>
+<li>licensed under the GPL</li>
+<li>written in C with python bindings</li>
+<li>supports encryption at rest if built with libsodium</li>
+</ul>
+<p>That last one is what makes it cool. AFAIK not many embedded databases support encryption at rest without extra plugins</p>
+<ul>
+<li>mariadb (embedded) needs third party plugins or only supports reading a key from a file</li>
+<li>sqlite has extensions (but caveat it is easy to accidentally create a non encrypted DB by mistake)</li>
+<li>the other database that has this is DuckDB (but I never used it)</li>
+</ul>
+<p>Here is a python example, the encryption is handled with a connection string argument that</p>
+<ul>
+<li>instructs the use of an extension libwiredtiger_sodium.so</li>
+<li>enables encryption using sodium extension</li>
+<li>passes a 32 byte hex encoded secret key</li>
+<li>note the library path may have to be absolute</li>
+</ul>
+<pre><code>import os
+from wiredtiger import wiredtiger_open
+
+DBPATH = '/tmp/WT_EXAMPLE'
+ 
+# Connect to the database and open a session
+os.system(f'rm -rf {DBPATH}')
+os.makedirs(DBPATH)
+ 
+conn = wiredtiger_open(DBPATH, 'create,extensions=[libwiredtiger_sodium.so],encryption=(name=sodium,secretkey=b70e537d9067da4745dd62a761b49785dd41b776a651ce8e7acaf9fbd0aa0b07)')
+session = conn.open_session()
+ 
+# Create a simple table
+session.create('table:T', 'key_format=S,value_format=S')
+ 
+# Open a cursor and insert a record
+cursor = session.open_cursor('table:T', None)
+ 
+cursor.set_key('key1')
+cursor.set_value('value1')
+cursor.insert()
+ 
+# Iterate through the records
+cursor.reset()
+for key, value in cursor:
+    print('Got record: %s : %s' % (key, value))
+ 
+conn.close()
+</code></pre>
+<h2>References</h2>
+<a href="https://github.com/wiredtiger/wiredtiger">https://github.com/wiredtiger/wiredtiger</a><a href="https://source.wiredtiger.com/11.0.0/index.html">https://source.wiredtiger.com/11.0.0/index.html</a><a href="https://source.wiredtiger.com/11.0.0/encryption.html">https://source.wiredtiger.com/11.0.0/encryption.html</a>
+</body>
+</html>
